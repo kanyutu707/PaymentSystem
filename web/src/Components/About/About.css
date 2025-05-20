@@ -1,0 +1,36 @@
+.about_container{
+    opacity: 0.75;
+    padding: 12px;
+    width: 45%;
+    display: flex;
+    align-self: center;
+    justify-self: center;
+    flex-direction: column;
+    padding: 4px;
+    margin: 5px;
+}
+.about_container .about_header{
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-self: center;
+    justify-self: center;
+    border-bottom: 1px solid white;
+}
+.about_container svg{
+    height: 30px;
+    width: 30px;
+    margin: 5px;
+    display: flex;
+    align-self: center;
+    justify-self: center;
+    padding: 4px;
+}
+.about_container .about_text{
+    padding: 3px;
+    font-size: 15px;
+}
+.about_container .about_text ol{
+    margin-left: 20px;
+    padding: 5px;
+}

@@ -1,0 +1,87 @@
+.contact_container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 20px;
+    margin: 10px;
+}
+
+.contact_container .contacts {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 10px;
+    padding: 4px;
+}
+
+.contact_container .contacts .getintouch {
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.contact_container .contacts .contact {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 5px;
+    padding: 2px;
+}
+
+.contact_container .contacts .contact h3 {
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    font-weight: 200;
+}
+
+.contact_container .contacts .contact h3 svg {
+    height: 18px;
+    width: 18px;
+    margin-right: 6px;
+}
+
+.contact_container .contacts .contact h4 {
+    font-size: 13px;
+    font-weight: 100;
+    margin-left: 5%;
+}
+
+.contact_container .contact_form {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    width: 80%;
+    align-self: center;
+    justify-self: center;
+
+
+}
+
+.contact_container .contact_form .input_group,
+.contact_container .contact_form .description_group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+}
+
+.contact_container .contact_form .description_group textarea {
+    height: 100px;
+    width: 100%;
+    margin-top: 3px;
+    background-color: white;
+    color: black;
+    border: none;
+}
+
+.contact_container .contact_form .input_group input {
+    height: 40px;
+    margin-top: 3px;
+    background-color: white;
+    color: black;
+    border: none;
+}
+.contact_container .contact_form .feedback_button{
+    height: 40px;
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    cursor: pointer;
+    margin:5px 0;
+}
