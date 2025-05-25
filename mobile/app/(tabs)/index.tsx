@@ -1,75 +1,178 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import {StyleSheet, Text, View } from "react-native";
+import Ionicons from '@expo/vector-icons/Ionicons';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
+export default function Index() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.indexcontainer}>
+      <View style={styles.indexbal}>
+        <View style={styles.indexSecondCol}>
+          <Text style={styles.indexBalTitle}>Balance</Text>
+          <Text style={styles.indexBalNum}>$ 5000</Text>
+        </View>
+        <MaterialIcons name="account-balance" size={50} margin={25} color="orange" />
+      </View>
+      <View style={styles.accountnumberholder}><Text style={styles.accountnumbertitle}>Account Number: </Text><Text style={styles.accountnumber}>BR2CCMNSRDDWE</Text></View>
+      <View style={styles.extras}>
+        <View style={styles.extrarow}>
+          <View style={styles.extra}>
+            <Text style={styles.extraTitle}>Deposit</Text>
+            <Ionicons name="bag-add-sharp" size={25} color="black" />
+            <Text style={styles.extraValue}>$ 15000</Text>
+            <Text style={styles.extraDate}>15/2/2020</Text>
+          </View>
+          <View style={styles.extra}>
+            <Text style={styles.extraTitle}>Withdrawals</Text>
+            <MaterialCommunityIcons name="bank-remove" size={25} color="black" />
+            <Text style={styles.extraValue}>$ 15000</Text>
+            <Text style={styles.extraDate}>15/2/2020</Text>
+          </View>
+        </View>
+        <View style={styles.extrarow}>
+          <View style={styles.extra}>
+            <Text style={styles.extraTitle}>Recieved</Text>
+            <FontAwesome5 name="receipt" size={25} color="black" />
+            <Text style={styles.extraValue}>$ 15000</Text>
+            <Text style={styles.extraDate}>15/2/2020</Text>
+          </View>
+          <View style={styles.extra}>
+            <Text style={styles.extraTitle}>Sent</Text>
+            <MaterialIcons name="payments" size={25} color="black" />
+            <Text style={styles.extraValue}>$ 15000</Text>
+            <Text style={styles.extraDate}>15/2/2020</Text>
+          </View>
+        </View>
+      </View>
+      <View style={styles.membershipcontainer}><Text style={styles.membershiptitle}>Membership</Text><Text style={styles.membership}>GOLD</Text><MaterialCommunityIcons name="medal" size={30} color="gold" /></View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+
+  indexcontainer: {
+    backgroundColor: "whitesmoke",
+    width: '100%',
+    height: '100%',
+    paddingLeft: 10,
+    paddingRight: 10
+  },
+  indexbal: {
+    height: 100,
+    width: '100%',
+    display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
+    backgroundColor: 'white',
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  indexBalTitle: {
+    fontSize: 24,
+    fontWeight: 800,
+
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  indexBalNum: {
+    fontSize: 21,
+    fontWeight: 700,
+    margin: 5,
+    color: 'orange'
   },
-});
+  indexSecondCol: {
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'space-around',
+    margin: 10
+
+  },
+  accountnumberholder: {
+    backgroundColor: "white",
+    width: "100%",
+    height: 80,
+    marginVertical: 10,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    flexDirection: "column",
+    justifyContent: 'space-around',
+    paddingLeft: 5,
+    alignItems: "flex-start"
+
+  },
+  accountnumbertitle: {
+    fontSize: 17,
+    color: "black",
+    fontWeight: 700,
+    alignItems: "center"
+  },
+  accountnumber: {
+    fontSize: 15,
+    color: "orange",
+    fontWeight: 500,
+    alignItems: "center"
+  },
+  extras: {
+    flexDirection: "row",
+    width: "100%"
+  },
+  extrarow: {
+    flexDirection: "column",
+    width: "50%"
+  },
+  extra: {
+    backgroundColor: "white",
+    margin: "2%",
+    width: "97%",
+    height: 200,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    padding: 14,
+    justifyContent: "space-evenly"
+  },
+  extraTitle: {
+    fontSize: 20,
+    fontWeight: 700,
+    marginVertical: 5,
+  },
+  extraValue: {
+    fontSize: 15,
+    fontWeight: 600
+  },
+  extraDate: {
+    fontSize: 12,
+    fontWeight: 600,
+    color: "orange"
+  },
+  membershipcontainer: {
+    backgroundColor: "white",
+    width: "100%",
+    height: 70,
+    marginVertical: 10,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    padding: 10,
+    alignItems: "center"
+  },
+  membershiptitle: {
+    fontSize: 20,
+    fontWeight: 700,
+    color: "orange"
+  },
+  membership: {
+    fontSize: 16,
+    fontWeight: 700
+  }
+})
