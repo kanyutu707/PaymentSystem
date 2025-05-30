@@ -2,18 +2,42 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Entypo from '@expo/vector-icons/Entypo';
+import { useRouter } from 'expo-router';
 
 const transact = () => {
+  const router = useRouter();
+  
   return (
-    <SafeAreaView>
-      <TouchableOpacity style={styles.transactCard}>
-        <Text style={styles.transactCardText}>Deposit</Text>
-        <Entypo name="chevron-right" size={30} color="orange" />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.transactCard}>
-        <Text style={styles.transactCardText}>Withdraw</Text>
-        <Entypo name="chevron-right" size={30} color="orange" />
-      </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.contentContainer}>
+        
+        <TouchableOpacity 
+          style={styles.transactCard} 
+          onPress={() => router.navigate('../transact/deposit')}
+        >
+          <View style={styles.cardContent}>
+            <View style={styles.iconContainer}>
+              <Text style={styles.iconText}>💰</Text>
+            </View>
+            <Text style={styles.transactCardText}>Deposit</Text>
+          </View>
+          <Entypo name="chevron-right" size={28} color="orange" />
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.transactCard} 
+          onPress={() => router.navigate('../transact/withdraw')}
+        >
+          <View style={styles.cardContent}>
+            <View style={styles.iconContainer}>
+              <Text style={styles.iconText}>💸</Text>
+            </View>
+            <Text style={styles.transactCardText}>Withdraw</Text>
+          </View>
+          <Entypo name="chevron-right" size={28} color="orange" />
+        </TouchableOpacity>
+
+      </View>
     </SafeAreaView>
   )
 }
@@ -21,32 +45,64 @@ const transact = () => {
 export default transact
 
 const styles = StyleSheet.create({
-  transactContainer: {
-    backgroundColor: "whitesmoke",
-    width: '100%',
-    height: '100%',
-    paddingLeft: 10,
-    paddingRight: 10,
-    justifyContent:"center"
+  container: {
+    flex: 1,
+    backgroundColor:"white"
   },
+  contentContainer: {
+    flex: 1,
+    padding: 16,
+    backgroundColor:"white"
+  },
+
   transactCard: {
     backgroundColor: "white",
-    height: 60,
-    width: "98%",
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    flexDirection:"row",
-    alignItems:"center",
-    justifyContent:"space-between",
-    paddingLeft: 10,
-    paddingRight: 10,
-    marginBottom:10
+    height: 80,
+    width: "100%",
+    borderRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: "orange",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4.65,
+    elevation: 8,
   },
-  transactCardText:{
-    fontSize:20,
-    fontWeight:700,
-    paddingLeft:10
-  }
+  
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  
+  iconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "orange",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 16,
+    borderWidth: 2,
+    borderColor: "white",
+  },
+  
+  iconText: {
+    fontSize: 24,
+  },
+  
+  transactCardText: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "black",
+    flex: 1,
+  },
 })

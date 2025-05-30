@@ -1,5 +1,5 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import {StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -7,172 +7,385 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   return (
-    <SafeAreaView style={styles.indexcontainer}>
-      <View style={styles.indexbal}>
-        <View style={styles.indexSecondCol}>
-          <Text style={styles.indexBalTitle}>Balance</Text>
-          <Text style={styles.indexBalNum}>$ 5000</Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+      
+        <View style={styles.indexbal}>
+          <View style={styles.balanceContent}>
+            <View style={styles.indexSecondCol}>
+              <Text style={styles.indexBalTitle}>Total Balance</Text>
+              <Text style={styles.indexBalNum}>$5,000.00</Text>
+              <Text style={styles.balanceSubtext}>Available balance</Text>
+            </View>
+            <View style={styles.balanceIconContainer}>
+              <MaterialIcons name="account-balance-wallet" size={45} color="orange" />
+            </View>
+          </View>
+          <View style={styles.balanceGradientOverlay} />
         </View>
-        <MaterialIcons name="account-balance" size={50} margin={25} color="orange" />
-      </View>
-      <View style={styles.accountnumberholder}><Text style={styles.accountnumbertitle}>Account Number: </Text><Text style={styles.accountnumber}>BR2CCMNSRDDWE</Text></View>
-      <View style={styles.extras}>
-        <View style={styles.extrarow}>
-          <View style={styles.extra}>
-            <Text style={styles.extraTitle}>Deposit</Text>
-            <Ionicons name="bag-add-sharp" size={25} color="black" />
-            <Text style={styles.extraValue}>$ 15000</Text>
-            <Text style={styles.extraDate}>15/2/2020</Text>
+
+        <View style={styles.accountnumberholder}>
+          <View style={styles.accountHeader}>
+            <View style={styles.accountIconCircle}>
+              <MaterialIcons name="credit-card" size={22} color="white" />
+            </View>
+            <Text style={styles.accountnumbertitle}>Account Number</Text>
           </View>
-          <View style={styles.extra}>
-            <Text style={styles.extraTitle}>Withdrawals</Text>
-            <MaterialCommunityIcons name="bank-remove" size={25} color="black" />
-            <Text style={styles.extraValue}>$ 15000</Text>
-            <Text style={styles.extraDate}>15/2/2020</Text>
-          </View>
-        </View>
-        <View style={styles.extrarow}>
-          <View style={styles.extra}>
-            <Text style={styles.extraTitle}>Recieved</Text>
-            <FontAwesome5 name="receipt" size={25} color="black" />
-            <Text style={styles.extraValue}>$ 15000</Text>
-            <Text style={styles.extraDate}>15/2/2020</Text>
-          </View>
-          <View style={styles.extra}>
-            <Text style={styles.extraTitle}>Sent</Text>
-            <MaterialIcons name="payments" size={25} color="black" />
-            <Text style={styles.extraValue}>$ 15000</Text>
-            <Text style={styles.extraDate}>15/2/2020</Text>
+          <Text style={styles.accountnumber}>BR2C CMNS RDDW E</Text>
+          <View style={styles.accountTypeBadge}>
+            <MaterialCommunityIcons name="star" size={16} color="orange" />
+            <Text style={styles.accountType}>PREMIUM ACCOUNT</Text>
           </View>
         </View>
-      </View>
-      <View style={styles.membershipcontainer}><Text style={styles.membershiptitle}>Membership</Text><Text style={styles.membership}>GOLD</Text><MaterialCommunityIcons name="medal" size={30} color="gold" /></View>
+
+        <View style={styles.extras}>
+          <View style={styles.extrarow}>
+            <View style={[styles.extra, styles.depositCard]}>
+              <View style={styles.extraHeader}>
+                <View style={styles.iconCircleOrange}>
+                  <Ionicons name="add-circle" size={24} color="white" />
+                </View>
+                <Text style={styles.extraTitle}>Deposits</Text>
+              </View>
+              <Text style={styles.extraValue}>$15,000</Text>
+              <Text style={styles.extraDate}>Last: 15/2/2020</Text>
+            </View>
+            
+            <View style={[styles.extra, styles.withdrawCard]}>
+              <View style={styles.extraHeader}>
+                <View style={styles.iconCircleBlack}>
+                  <MaterialCommunityIcons name="bank-minus" size={24} color="white" />
+                </View>
+                <Text style={styles.extraTitle}>Withdrawals</Text>
+              </View>
+              <Text style={styles.extraValue}>$10,500</Text>
+              <Text style={styles.extraDate}>Last: 15/2/2020</Text>
+            </View>
+          </View>
+          
+          <View style={styles.extrarow}>
+            <View style={[styles.extra, styles.receivedCard]}>
+              <View style={styles.extraHeader}>
+                <View style={styles.iconCircleOrange}>
+                  <FontAwesome5 name="arrow-down" size={20} color="white" />
+                </View>
+                <Text style={styles.extraTitle}>Received</Text>
+              </View>
+              <Text style={styles.extraValue}>$8,200</Text>
+              <Text style={styles.extraDate}>Last: 15/2/2020</Text>
+            </View>
+            
+            <View style={[styles.extra, styles.sentCard]}>
+              <View style={styles.extraHeader}>
+                <View style={styles.iconCircleBlack}>
+                  <FontAwesome5 name="arrow-up" size={20} color="white" />
+                </View>
+                <Text style={styles.extraTitle}>Sent</Text>
+              </View>
+              <Text style={styles.extraValue}>$5,700</Text>
+              <Text style={styles.extraDate}>Last: 15/2/2020</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.membershipcontainer}>
+          <View style={styles.membershipContent}>
+            <View style={styles.membershipInfo}>
+              <Text style={styles.membershiptitle}>Membership Status</Text>
+              <View style={styles.goldBadge}>
+                <MaterialCommunityIcons name="crown" size={20} color="white" />
+                <Text style={styles.membership}>GOLD MEMBER</Text>
+              </View>
+            </View>
+            <View style={styles.membershipIconContainer}>
+              <MaterialCommunityIcons name="star-circle" size={55} color="orange" />
+            </View>
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-
-  indexcontainer: {
-    backgroundColor: "whitesmoke",
-    width: '100%',
-    height: '100%',
-    paddingLeft: 10,
-    paddingRight: 10
+  container: {
+    flex: 1,
+    backgroundColor: "white",
   },
+  
+  scrollView: {
+    flex: 1,
+  },
+  
+  scrollContent: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  
   indexbal: {
-    height: 100,
+    height: 160,
     width: '100%',
-    display: 'flex',
+    marginBottom: 24,
+    borderRadius: 24,
+    backgroundColor: 'black',
+    elevation: 12,
+    overflow: 'hidden',
+  },
+  
+  balanceContent: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: 'white',
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-
+    alignItems: 'center',
+    paddingHorizontal: 28,
+    paddingVertical: 24,
+    zIndex: 2,
   },
-  indexBalTitle: {
-    fontSize: 24,
-    fontWeight: 800,
-
-  },
-  indexBalNum: {
-    fontSize: 21,
-    fontWeight: 700,
-    margin: 5,
-    color: 'orange'
-  },
-  indexSecondCol: {
-    display: 'flex',
+  
+  balanceGradientOverlay: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: '40%',
     height: '100%',
-    justifyContent: 'space-around',
-    margin: 10
+    backgroundColor: 'rgba(255, 165, 0, 0.1)',
+    borderTopRightRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  
+  indexSecondCol: {
+    flex: 1,
+  },
+  
+  indexBalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: 'white',
+    marginBottom: 8,
+    opacity: 0.9,
+  },
+  
+  indexBalNum: {
+    fontSize: 36,
+    fontWeight: '800',
+    color: 'orange',
+    marginBottom: 6,
+  
+  },
+  
+  balanceSubtext: {
+    fontSize: 15,
+    color: 'white',
+    fontWeight: '500',
+    opacity: 0.8,
+  },
+  
+  balanceIconContainer: {
+    backgroundColor: 'white',
+    borderRadius: 60,
+    padding: 18,
+    elevation: 8,
 
   },
+
   accountnumberholder: {
     backgroundColor: "white",
     width: "100%",
-    height: 80,
-    marginVertical: 10,
-    borderTopLeftRadius: 5,
-    borderBottomLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderBottomRightRadius: 5,
-    flexDirection: "column",
-    justifyContent: 'space-around',
-    paddingLeft: 5,
-    alignItems: "flex-start"
-
+    paddingHorizontal: 24,
+    paddingVertical: 24,
+    marginBottom: 24,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: 'orange',
+    elevation: 8,
+  
   },
+  
+  accountHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  
+  accountIconCircle: {
+    backgroundColor: 'orange',
+    borderRadius: 25,
+    padding: 12,
+    marginRight: 16,
+    elevation: 4,
+ 
+  },
+  
   accountnumbertitle: {
-    fontSize: 17,
+    fontSize: 16,
     color: "black",
-    fontWeight: 700,
-    alignItems: "center"
+    fontWeight: '700',
   },
+  
   accountnumber: {
-    fontSize: 15,
-    color: "orange",
-    fontWeight: 500,
-    alignItems: "center"
+    fontSize: 22,
+    color: "black",
+    fontWeight: '800',
+    letterSpacing: 2,
+    marginBottom: 16,
   },
+  
+  accountTypeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 25,
+    alignSelf: 'flex-start',
+    elevation: 4,
+  },
+  
+  accountType: {
+    fontSize: 13,
+    color: "white",
+    fontWeight: '800',
+    marginLeft: 6,
+  },
+
   extras: {
-    flexDirection: "row",
-    width: "100%"
+    width: "100%",
+    marginBottom: 24,
   },
+  
   extrarow: {
-    flexDirection: "column",
-    width: "50%"
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
+  
   extra: {
     backgroundColor: "white",
-    margin: "2%",
-    width: "97%",
-    height: 200,
-    borderTopLeftRadius: 5,
-    borderBottomLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderBottomRightRadius: 5,
-    padding: 14,
-    justifyContent: "space-evenly"
+    width: "48%",
+    borderRadius: 20,
+    padding: 20,
+    elevation: 8,
   },
+  
+  depositCard: {
+    borderWidth: 2,
+    borderColor: 'orange',
+  },
+  
+  withdrawCard: {
+    borderWidth: 2,
+    borderColor: 'black',
+  },
+  
+  receivedCard: {
+    borderWidth: 2,
+    borderColor: 'orange',
+  },
+  
+  sentCard: {
+    borderWidth: 2,
+    borderColor: 'black',
+  },
+  
+  extraHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  
+  iconCircleOrange: {
+    backgroundColor: 'orange',
+    borderRadius: 30,
+    padding: 10,
+    marginRight: 12,
+    elevation: 4,
+ 
+  },
+  
+  iconCircleBlack: {
+    backgroundColor: 'black',
+    borderRadius: 30,
+    padding: 10,
+    marginRight: 12,
+    elevation: 4,
+   
+  },
+  
   extraTitle: {
-    fontSize: 20,
-    fontWeight: 700,
-    marginVertical: 5,
-  },
-  extraValue: {
     fontSize: 15,
-    fontWeight: 600
+    fontWeight: '700',
+    color: 'black',
   },
+  
+  extraValue: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: 'black',
+    marginBottom: 8,
+  },
+  
   extraDate: {
-    fontSize: 12,
-    fontWeight: 600,
-    color: "orange"
+    fontSize: 13,
+    fontWeight: '600',
+    color: "orange",
   },
+
   membershipcontainer: {
     backgroundColor: "white",
     width: "100%",
-    height: 70,
-    marginVertical: 10,
-    borderTopLeftRadius: 5,
-    borderBottomLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderBottomRightRadius: 5,
+    borderRadius: 20,
+    padding: 24,
+    borderWidth: 3,
+    borderColor: 'orange',
+    elevation: 10,
+
+  },
+  
+  membershipContent: {
     flexDirection: "row",
     justifyContent: 'space-between',
-    padding: 10,
-    alignItems: "center"
+    alignItems: "center",
   },
+  
+  membershipInfo: {
+    flex: 1,
+  },
+  
   membershiptitle: {
-    fontSize: 20,
-    fontWeight: 700,
-    color: "orange"
+    fontSize: 18,
+    fontWeight: '700',
+    color: "black",
+    marginBottom: 16,
   },
+  
+  goldBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'orange',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 25,
+    alignSelf: 'flex-start',
+    elevation: 6,
+
+  },
+  
   membership: {
-    fontSize: 16,
-    fontWeight: 700
-  }
+    fontSize: 15,
+    fontWeight: '800',
+    color: 'white',
+    marginLeft: 8,
+  },
+  
+  membershipIconContainer: {
+    backgroundColor: 'black',
+    borderRadius: 40,
+    padding: 12,
+    elevation: 8,
+ 
+  },
 })

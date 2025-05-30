@@ -5,9 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 const sent = () => {
   return (
     <SafeAreaView style={styles.searchcontainer}>
-    
+
       <TextInput style={styles.searchbar} placeholder='input your search query ...'></TextInput>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.singleSent}>
           <View style={styles.singleSentTop}>
             <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
@@ -124,7 +124,8 @@ const styles = StyleSheet.create({
   searchcontainer: {
     width: "100%",
     height: "100%",
-    padding: 10
+    padding: 10,
+    backgroundColor: "white"
   },
   searchbar: {
     backgroundColor: "white",
@@ -137,11 +138,13 @@ const styles = StyleSheet.create({
   singleSent: {
     backgroundColor: "white",
     width: "98%",
-    height: 65,
+    height: 70,
     borderRadius: 6,
     marginVertical: 7,
     flexDirection: "column",
-
+    borderColor: "orange",
+    borderWidth: 2,
+    padding:2,
     justifyContent: "space-evenly"
   },
   singleSentTop: {

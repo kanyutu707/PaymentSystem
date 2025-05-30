@@ -14,6 +14,9 @@ const _layout = () => {
                     borderWidth: 0,
                     elevation: 0,
                     shadowOpacity: 0,
+                    borderBottomColor: "orange",
+                    borderBottomWidth: 2,
+                    
                 },
                 headerShown: true,
                 tabBarIcon: ({ color }) => <MaterialIcons size={28} name="home" color={color} />
@@ -24,7 +27,10 @@ const _layout = () => {
                 headerStyle: {
                     borderWidth: 0,
                     elevation: 0,
-                    shadowOpacity: 0
+                    shadowOpacity: 0,
+                    borderBottomColor: "orange",
+                    borderBottomWidth: 2,
+                    
                 },
                 headerShown: true,
                 tabBarIcon: ({ color }) => <MaterialIcons size={28} name="payment" color={color} />
@@ -36,6 +42,8 @@ const _layout = () => {
                     borderWidth: 0,
                     elevation: 0,
                     shadowOpacity: 0,
+                    borderBottomColor: "orange",
+                    borderBottomWidth: 2
                 },
                 headerShown: true,
                 tabBarIcon: ({ color }) => <FontAwesome6 size={28} name="arrow-right-arrow-left" color={color} />
@@ -46,6 +54,8 @@ const _layout = () => {
                     borderWidth: 0,
                     elevation: 0,
                     shadowOpacity: 0,
+                    borderBottomColor: "orange",
+                    borderBottomWidth: 2
                 },
                 headerShadowVisible: false,
                 headerShown: true,
