@@ -1,13 +1,44 @@
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const deffered = () => {
+const [isOpen, setIsOpen]=useState<boolean>(false);
+const[selectedStyle, setselectedStyle]=useState<any>(styles.none);
+
+const[isOpen2, setIsOpen2]=useState<boolean>(false);
+const[selectedStyle2, setselectedStyle2]=useState<any>(styles.none);
+
+
+const handleChange2=()=>{
+  setIsOpen2(!isOpen2);
+  handleStyle2();
+}
+
+const handleStyle2=()=>{
+  if(isOpen2){
+    setselectedStyle2(styles.none);
+  }else{
+    setselectedStyle2(styles.form);
+  }
+}
+const handleChange=()=>{
+  setIsOpen(!isOpen);
+  handleStyle();
+}
+
+const handleStyle=()=>{
+  if(isOpen){
+    setselectedStyle(styles.none);
+  }else{
+    setselectedStyle(styles.form);
+  }
+}
   return (
     <SafeAreaView style={styles.callToAction}>
     <ScrollView style={styles.callToActionSub} showsVerticalScrollIndicator={false}>
-      <Pressable style={styles.actionButton}><Text style={styles.actionButtonTxt}>Date Lock</Text></Pressable>
-      <View style={styles.form}>
+      <Pressable style={styles.actionButton} onPress={handleChange2}><Text style={styles.actionButtonTxt} >Date Lock</Text></Pressable>
+      <View style={selectedStyle2}>
         <Text style={styles.formLabel}>ACCOUNT NUMBER</Text>
         <TextInput style={styles.formInput} />
         <Text style={styles.formLabel}>AMOUNT</Text>
@@ -18,8 +49,8 @@ const deffered = () => {
         <TextInput style={styles.formInput} />
         <Pressable style={styles.formButton}><Text style={styles.formButtonTxt}>SUBMIT</Text></Pressable>
       </View>
-      <Pressable style={styles.actionButton}><Text style={styles.actionButtonTxt}>Code Lock</Text></Pressable>
-      <View style={styles.form}>
+      <Pressable style={styles.actionButton} onPress={handleChange}><Text style={styles.actionButtonTxt} >Code Lock</Text></Pressable>
+      <View style={selectedStyle}>
         <Text style={styles.formLabel}>ACCOUNT NUMBER</Text>
         <TextInput style={styles.formInput} />
         <Text style={styles.formLabel}>AMOUNT</Text>
@@ -36,6 +67,9 @@ const deffered = () => {
 export default deffered
 
 const styles = StyleSheet.create({
+  none:{
+    display:"none"
+  },
   callToAction: {
     padding: 20,
     flexDirection: "column",

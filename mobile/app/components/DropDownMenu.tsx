@@ -16,7 +16,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
   handleClose,
   trigger,
   children,
-  dropdownWidth = "100%",
+  dropdownWidth = 200,
 }) => {
   const triggerRef = useRef<View>(null);
   const [position, setPosition] = useState({x: 0, y: 0, width: 0});
@@ -26,7 +26,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
       triggerRef.current.measure((fx, fy, width, height, px, py) => {
         setPosition({
           x: px,
-          y: py + height,
+          y: py + height + 5, // Added small gap
           width: width,
         });
       });
@@ -64,29 +64,28 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
     </View>
   );
 };
-export default DropdownMenu
+
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    
+    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Semi-transparent black overlay
   },
   menu: {
     position: 'absolute',
-    width: 80,
-    backgroundColor: 'white',
-    borderRadius: 5,
-    padding: 10,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    // Enhanced shadow for better depth
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 8,
+    // Subtle border
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
   },
-  menuOption: {
-    padding: 5,
-    width:"100%"
-  },
- 
 });
+
+export default DropdownMenu;
