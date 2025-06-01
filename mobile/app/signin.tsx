@@ -1,61 +1,216 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import React from 'react'
+import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useState } from 'react'
 import { useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const signin = () => {
-  const router=useRouter();
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   return (
-    <SafeAreaView style={styles.signincontainer}>
-      <View >
-        <Pressable>Sign In</Pressable>
-        <Pressable>Sign In</Pressable>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.logoSection}>
+        <View style={styles.logoCircle}>
+          <Text style={styles.logoText}>🔐</Text>
+        </View>
+        <Text style={styles.welcomeText}>Welcome Back</Text>
+        <Text style={styles.subtitleText}>Sign in to your account</Text>
       </View>
-      <View style={styles.signinform}>
-          <Text style={styles.signinlabel}>Email</Text>
-          <TextInput placeholder='email' style={styles.signininput}/>
 
-          <Text style={styles.signinlabel}>Password</Text>
-          <TextInput placeholder='email' style={styles.signininput}/>
+      <View style={styles.formContainer}>
+        <Text style={styles.formHeader}>SIGN IN</Text>
+        
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Email Address</Text>
+          <View style={styles.inputContainer}>
+            <TextInput 
+              placeholder='Enter your email' 
+              style={styles.textInput}
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              placeholderTextColor="#999999"
+            />
+          </View>
+        </View>
 
-          <Pressable onPress={()=>router.navigate("./(tabs)")}>
-         <Text>SIGN IN</Text>
-       </Pressable>
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>Password</Text>
+          <View style={styles.inputContainer}>
+            <TextInput 
+              placeholder='Enter your password' 
+              style={styles.textInput}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={true}
+              placeholderTextColor="#999999"
+            />
+          </View>
+        </View>
+
+        <Pressable 
+          onPress={() => router.navigate("./(tabs)")} 
+          style={({ pressed }) => [
+            styles.signinButton,
+            pressed && styles.signinButtonPressed
+          ]}
+        >
+          <Text style={styles.signinButtonText}>SIGN IN</Text>
+        </Pressable>
+
+        <TouchableOpacity 
+          style={styles.registerContainer} 
+          onPress={() => router.navigate("./signup")}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.registerText}>Don't have an account? </Text>
+          <Text style={styles.registerLink}>Register here</Text>
+        </TouchableOpacity>
       </View>
-    
-       </SafeAreaView>
+    </SafeAreaView>
   )
 }
 
 export default signin
 
 const styles = StyleSheet.create({
-  signincontainer:{
-      width:"100%",
-      height:"100%",
-      alignItems:"center",
-      justifyContent:"center",
-      backgroundColor:"white",
-     
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 20,
   },
-  signinform:{
-    backgroundColor:"white",
-    borderWidth:2,
-    borderColor:"orange",
-    width:"80%",
-    borderRadius:4,
-    padding:3
+  logoSection: {
+    alignItems: 'center',
+    paddingTop: 60,
+    paddingBottom: 40,
   },
-  signinlabel:{
-    marginBottom:5,
-    fontWeight:700,
-    marginTop:7
+  logoCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#ff8c00',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  signininput:{
-    height:50,
-    marginVertical:10,
-    width:"98%",
-    borderWidth:1,
-    borderColor:"orange"
-  }
+  logoText: {
+    fontSize: 35,
+  },
+  welcomeText: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#000000',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  subtitleText: {
+    fontSize: 16,
+    color: '#666666',
+    textAlign: 'center',
+  },
+  formContainer: {
+    backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#ff8c00',
+    borderRadius: 20,
+    padding: 30,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  formHeader: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#000000',
+    textAlign: 'center',
+    marginBottom: 30,
+    paddingBottom: 15,
+    borderBottomWidth: 2,
+    borderBottomColor: '#ff8c00',
+  },
+  inputGroup: {
+    marginBottom: 25,
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 8,
+  },
+  inputContainer: {
+    borderWidth: 2,
+    borderColor: '#ff8c00',
+    borderRadius: 12,
+    backgroundColor: '#ffffff',
+  },
+  textInput: {
+    height: 55,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: '#000000',
+    backgroundColor: 'transparent',
+  },
+  signinButton: {
+    backgroundColor: '#ff8c00',
+    height: 55,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    marginBottom: 25,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  signinButtonPressed: {
+    backgroundColor: '#e67e00',
+    transform: [{ scale: 0.98 }],
+  },
+  signinButtonText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#ffffff',
+    letterSpacing: 1,
+  },
+  registerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    backgroundColor: '#f8f8f8',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  registerText: {
+    fontSize: 15,
+    color: '#666666',
+    fontWeight: '500',
+  },
+  registerLink: {
+    fontSize: 15,
+    color: '#ff8c00',
+    fontWeight: '700',
+  },
 })
