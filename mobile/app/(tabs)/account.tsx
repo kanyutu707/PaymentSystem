@@ -14,7 +14,7 @@ const account = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Profile Section */}
+   
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
             <Image 
@@ -29,7 +29,6 @@ const account = () => {
           </View>
         </View>
 
-        {/* Account Details Card */}
         <View style={styles.detailsCard}>
           <Text style={styles.sectionTitle}>Account Details</Text>
           
@@ -62,7 +61,6 @@ const account = () => {
           </View>
         </View>
 
-        {/* Map Section */}
         <View style={styles.mapSection}>
           <Text style={styles.sectionTitle}>Location</Text>
           <View style={styles.mapPlaceholder}>
@@ -72,7 +70,6 @@ const account = () => {
           </View>
         </View>
 
-        {/* Logout Button */}
         <TouchableOpacity 
           onPress={() => router.navigate('../signin')} 
           style={styles.logoutButton}

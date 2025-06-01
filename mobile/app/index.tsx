@@ -135,20 +135,12 @@ const styles = StyleSheet.create({
         paddingVertical: 40,
     },
     heroCard: {
-        backgroundColor: '#ffffff',
-        borderWidth: 2,
-        borderColor: '#ff8c00',
+    
         borderRadius: 20,
         padding: 30,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 6,
-        },
-        shadowOpacity: 0.15,
-        shadowRadius: 12,
-        elevation: 8,
+      
+
     },
     heroTitle: {
         fontSize: 24,
