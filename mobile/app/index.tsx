@@ -17,8 +17,8 @@ const index = () => {
             <View style={styles.content}>
                 <View style={styles.logoSection}>
                     <View style={styles.brandContainer}>
-                        <Text style={styles.brandPrimary}>SECURUM</Text>
-                        <Text style={styles.brandSecondary}>SOLUTIO</Text>
+                        <Text style={styles.brandPrimary}>CENTAL</Text>
+                        <Text style={styles.brandSecondary}>PAYMENTS</Text>
                     </View>
                     <View style={styles.taglineContainer}>
                         <Text style={styles.tagline}>Your trusted financial partner</Text>
