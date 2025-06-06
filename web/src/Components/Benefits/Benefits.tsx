@@ -6,13 +6,13 @@ const Benefits = () => {
   return (
     <div className="benefits_container" id="benefits">
       <header className="benefits_header">
-        BENEFITS OF CENTAL SOLUTIO
+        BENEFITS OF CENTAL PAYMENTS
       </header>
       <section className="benefits">
         <span className="benefit">
           <GiDeliveryDrone/>
           <h3>GUARANTEED DELIVERY</h3>
-          <h4>With CENTAL SOLUTIO money doesn't leave the account unless authorized by the owner</h4>
+          <h4>With CENTAL PAYMENTS money doesn't leave the account unless authorized by the owner</h4>
         </span>
         <span className="benefit">
           <MdPayment/>
