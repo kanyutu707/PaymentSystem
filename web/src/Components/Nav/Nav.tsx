@@ -3,7 +3,7 @@ const Nav = () => {
   return (
     <div className="nav_container">
         <span className="logo">
-            Securum Solutio
+            CENTAL PAYMENTS
         </span>
         <section className="navigations">
             <a href="#home" >Home</a>

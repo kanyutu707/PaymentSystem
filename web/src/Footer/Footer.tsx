@@ -7,7 +7,7 @@ const Footer = () => {
   return (
     <div className="footer_container">
         <header className="footer_header">
-            Securum Solutio
+            CENTAL PAYMENTS
         </header>
         <section className="footer_options">
             <Link to="#"><FcRules/> Terms Of Service</Link>

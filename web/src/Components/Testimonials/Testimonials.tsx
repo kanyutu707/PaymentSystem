@@ -18,7 +18,7 @@ const Testimonials = () => {
                     </span>
                 </span>
                 <span className="testimonial_details">
-                    Since we started using Securum Solutio to process payments we have found that we are able to be paid for every work that we deliver on top of that the system also gives us real time analysis of our finances
+                    Since we started using CENTAL PAYMENTS to process payments we have found that we are able to be paid for every work that we deliver on top of that the system also gives us real time analysis of our finances
                 </span>
             </div>
             <div className="testimonial">
@@ -30,7 +30,7 @@ const Testimonials = () => {
                     </span>
                 </span>
                 <span className="testimonial_details">
-                    Since we started using Securum Solutio to process payments we have found that we are able to be paid for every work that we deliver on top of that the system also gives us real time analysis of our finances
+                    Since we started using CENTAL PAYMENTS to process payments we have found that we are able to be paid for every work that we deliver on top of that the system also gives us real time analysis of our finances
                 </span>
             </div>
             <div className="testimonial">
@@ -42,7 +42,7 @@ const Testimonials = () => {
                     </span>
                 </span>
                 <span className="testimonial_details">
-                    Since we started using Securum Solutio to process payments we have found that we are able to be paid for every work that we deliver on top of that the system also gives us real time analysis of our finances
+                    Since we started using CENTAL PAYMENTS to process payments we have found that we are able to be paid for every work that we deliver on top of that the system also gives us real time analysis of our finances
                 </span>
             </div>
             <div className="testimonial">
@@ -54,7 +54,7 @@ const Testimonials = () => {
                     </span>
                 </span>
                 <span className="testimonial_details">
-                    Since we started using Securum Solutio to process payments we have found that we are able to be paid for every work that we deliver on top of that the system also gives us real time analysis of our finances
+                    Since we started using CENTAL PAYMENTS to process payments we have found that we are able to be paid for every work that we deliver on top of that the system also gives us real time analysis of our finances
                 </span>
             </div>
         </section>
