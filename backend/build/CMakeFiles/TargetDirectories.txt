@@ -1,0 +1,3 @@
+C:/Users/kanyu/projects/PaymentSystem/backend/build/CMakeFiles/backend.dir
+C:/Users/kanyu/projects/PaymentSystem/backend/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/kanyu/projects/PaymentSystem/backend/build/CMakeFiles/ZERO_CHECK.dir
