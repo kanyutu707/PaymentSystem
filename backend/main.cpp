@@ -1,5 +1,6 @@
 #include <iostream>
+#include "./paymentprocessing/headers/transaction.hpp"
 
 int main(){
-    std::cout<<"Test project cohesion";
+    transaction();
 }

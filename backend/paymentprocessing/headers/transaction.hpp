@@ -1,6 +1,11 @@
 #ifndef transaction_hpp
 #define transaction_hpp
 
-void deposit(int depositAmount);
-void withdraw(int withdrawAmount);
+#include <iostream>
+
+int balance();
+void transaction();
+int deposit(int depositAmount);
+int withdraw(int withdrawalAmount);
+
 #endif
