@@ -323,6 +323,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\kanyu\projects\PaymentSystem\backend\main.cpp" />
     <ClCompile Include="C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\transaction.cpp" />
     <ClCompile Include="C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\balance.cpp" />
+    <ClCompile Include="C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\deposit.cpp" />
+    <ClCompile Include="C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\withdraw.cpp" />
+    <ClCompile Include="C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\close.cpp" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

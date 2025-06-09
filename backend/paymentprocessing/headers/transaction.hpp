@@ -5,7 +5,8 @@
 
 int balance();
 void transaction();
-int deposit(int depositAmount);
-int withdraw(int withdrawalAmount);
+int deposit(int);
+int withdraw(int);
+void close();
 
 #endif

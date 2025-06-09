@@ -1,5 +1,7 @@
 #include "../headers/transaction.hpp"
 
+static int accountBalance=1000;
+
 int balance(){
-    return 50;
+    return accountBalance;
 }

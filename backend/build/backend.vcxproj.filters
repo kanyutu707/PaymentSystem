@@ -10,6 +10,15 @@
     <ClCompile Include="C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\balance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\deposit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\withdraw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\close.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\kanyu\projects\PaymentSystem\backend\CMakeLists.txt" />

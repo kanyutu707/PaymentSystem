@@ -1,3 +1,6 @@
 C:\Users\kanyu\projects\PaymentSystem\backend\main.cpp;C:\Users\kanyu\projects\PaymentSystem\backend\build\backend.dir\Debug\main.obj
 C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\transaction.cpp;C:\Users\kanyu\projects\PaymentSystem\backend\build\backend.dir\Debug\transaction.obj
 C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\balance.cpp;C:\Users\kanyu\projects\PaymentSystem\backend\build\backend.dir\Debug\balance.obj
+C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\deposit.cpp;C:\Users\kanyu\projects\PaymentSystem\backend\build\backend.dir\Debug\deposit.obj
+C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\withdraw.cpp;C:\Users\kanyu\projects\PaymentSystem\backend\build\backend.dir\Debug\withdraw.obj
+C:\Users\kanyu\projects\PaymentSystem\backend\paymentprocessing\source\close.cpp;C:\Users\kanyu\projects\PaymentSystem\backend\build\backend.dir\Debug\close.obj
