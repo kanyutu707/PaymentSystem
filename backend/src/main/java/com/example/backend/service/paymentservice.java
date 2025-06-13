@@ -8,6 +8,7 @@ import com.example.backend.repository.paymentrepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Optional;
 
@@ -27,7 +28,12 @@ public class paymentservice {
         newpayment.setAmount(amount);
         newpayment.setPaymenttype(paymenttype);
         newpayment.setConfirmationtype(confirmationtype);
-        newpayment.setConfirmation(confirmation);
+
+        if(confirmationtype.toString().equals("BYCODE")){
+            newpayment.setConfirmation(generateConfirmationCode());
+        }else{
+            newpayment.setConfirmation(confirmation);
+        }
 
         repository.save(newpayment);
     }
@@ -79,6 +85,12 @@ public class paymentservice {
             return ResponseEntity.ok(paymentFound.get());
         }
         return ResponseEntity.notFound().build();
+    }
+
+    public String generateConfirmationCode(){
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:\'\",<.>/?";
+        String pwd = RandomStringUtils.random( 20, characters );
+        return pwd;
     }
 }
 
