@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class user implements UserDetails {
@@ -32,6 +33,13 @@ public class user implements UserDetails {
 
     @UpdateTimestamp
     private  Date updatedAt;
+
+    @OneToMany(mappedBy = "sender")
+    private Set<payment> sent;
+
+    @OneToMany(mappedBy = "receiver")
+    private Set<payment> received;
+
 
     public user() {
     }
@@ -89,7 +97,7 @@ public class user implements UserDetails {
         this.updatedAt = updatedAt;
     }
 
-    public user(Long id, String email, String firstName, String lastName, String password, Date createdAt, Date updatedAt) {
+    public user(Long id, String email, String firstName, String lastName, String password, Date createdAt, Date updatedAt, Set<payment> sent, Set<payment> received) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
@@ -97,6 +105,24 @@ public class user implements UserDetails {
         this.password = password;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.sent = sent;
+        this.received = received;
+    }
+
+    public Set<payment> getSent() {
+        return sent;
+    }
+
+    public void setSent(Set<payment> sent) {
+        this.sent = sent;
+    }
+
+    public Set<payment> getReceived() {
+        return received;
+    }
+
+    public void setReceived(Set<payment> received) {
+        this.received = received;
     }
 
     @Override
@@ -109,6 +135,8 @@ public class user implements UserDetails {
                 ", password='" + password + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", sent=" + sent +
+                ", received=" + received +
                 '}';
     }
 

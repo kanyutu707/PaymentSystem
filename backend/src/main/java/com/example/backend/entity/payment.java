@@ -1,6 +1,7 @@
 package com.example.backend.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 public class payment {
@@ -19,7 +20,19 @@ public class payment {
     @Enumerated(EnumType.STRING)
     private confirmationtype confirmationtype;
 
+    @ColumnDefault("false")
+    private boolean isCompleted;
+
     private String confirmation;
+
+
+    @ManyToOne
+    @JoinColumn(name = "sender_id", nullable = false)
+    private  user sender;
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", nullable = false)
+    private user receiver;
 
     public payment() {
     }
@@ -72,13 +85,40 @@ public class payment {
         this.confirmation = confirmation;
     }
 
-    public payment(Long id, paymenttype paymenttype, Integer amount, paymenttime paymenttime, confirmationtype confirmationtype, String confirmation) {
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
+    }
+
+    public user getSender() {
+        return sender;
+    }
+
+    public void setSender(user sender) {
+        this.sender = sender;
+    }
+
+    public user getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(user receiver) {
+        this.receiver = receiver;
+    }
+
+    public payment(Long id, paymenttype paymenttype, Integer amount, paymenttime paymenttime, confirmationtype confirmationtype, boolean isCompleted, String confirmation, user sender, user receiver) {
         this.id = id;
         this.paymenttype = paymenttype;
         this.amount = amount;
         this.paymenttime = paymenttime;
         this.confirmationtype = confirmationtype;
+        this.isCompleted = isCompleted;
         this.confirmation = confirmation;
+        this.sender = sender;
+        this.receiver = receiver;
     }
 
     @Override
@@ -89,7 +129,10 @@ public class payment {
                 ", amount=" + amount +
                 ", paymenttime=" + paymenttime +
                 ", confirmationtype=" + confirmationtype +
+                ", isCompleted=" + isCompleted +
                 ", confirmation='" + confirmation + '\'' +
+                ", sender=" + sender +
+                ", receiver=" + receiver +
                 '}';
     }
 }

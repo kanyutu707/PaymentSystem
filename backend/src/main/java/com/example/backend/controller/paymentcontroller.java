@@ -7,9 +7,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Controller
 @RequestMapping(path = "/payment")
 public class paymentcontroller {
+
+
+    SimpleDateFormat ft=new SimpleDateFormat("dd-MM-yyyy");
+    String formattedDate=ft.format(new Date());
 
     @Autowired
     private paymentservice service;
@@ -22,7 +29,10 @@ public class paymentcontroller {
                     request.getAmount(),
                     request.getPaymenttype(),
                     request.getConfirmationtype(),
-                    request.getConfirmation()
+                    request.getConfirmation(),
+                    request.isCompleted(),
+                    request.getSender().getId(),
+                    request.getReceiver().getId()
             );
             return ResponseEntity.ok("Payment added successfully");
         } catch (Exception e) {
@@ -31,14 +41,15 @@ public class paymentcontroller {
     }
 
     @PutMapping(path = "/update/{id}")
-    public  ResponseEntity<String> updatePayment(@RequestBody payment request,@PathVariable Long id){
+    public  ResponseEntity<String> updatePayment(@RequestBody payment request, @PathVariable Long id){
         try{
             service.updatePayment(
                     request.getPaymenttime(),
                     request.getAmount(),
                     request.getPaymenttype(),
                     request.getConfirmationtype(),
-                    request.getConfirmation() ,
+                    request.isCompleted(),
+                    request.getConfirmation(),
                     id
             );
             return ResponseEntity.ok("Payment updated successfully");
@@ -56,4 +67,18 @@ public class paymentcontroller {
     public ResponseEntity<payment> getById(@PathVariable Long id) {
        return service.getById(id);
     }
+
+    @PutMapping(path = "/payByDate/{id}")
+    public String updateByDate(@PathVariable Long id){
+        service.useDate(formattedDate, id);
+        return "Payment successful";
+    }
+
+    @PutMapping(path = "/payByCode/{id}")
+    public String updateByCode(@RequestParam String sender, @RequestParam String recipient, @PathVariable Long id){
+        service.useCode(sender, recipient, id);
+        return "Payment successful";
+    }
+
+
 }

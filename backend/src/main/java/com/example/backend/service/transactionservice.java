@@ -19,12 +19,14 @@ public class transactionservice {
 
     public void addNewTransaction(transactiontype transationtype,
                                   platform platform,
-                                  Integer amount){
+                                  Integer amount
+                               ){
         transaction newtransaction=new transaction();
 
         newtransaction.setPlatform(platform);
         newtransaction.setAmount(amount);
         newtransaction.setTransactiontype(transationtype);
+
 
         repository.save(newtransaction);
     }
@@ -54,6 +56,7 @@ public class transactionservice {
             else{
                 updatedtransaction.setAmount(amount);
             }
+
             repository.save(updatedtransaction);
         }
     }
@@ -68,4 +71,6 @@ public class transactionservice {
         }
         return ResponseEntity.notFound().build();
     }
+
+
 }

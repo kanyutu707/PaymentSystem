@@ -1,10 +1,8 @@
 package com.example.backend.service;
 
-import com.example.backend.entity.confirmationtype;
-import com.example.backend.entity.payment;
-import com.example.backend.entity.paymenttime;
-import com.example.backend.entity.paymenttype;
+import com.example.backend.entity.*;
 import com.example.backend.repository.paymentrepo;
+import com.example.backend.repository.userrepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,34 +12,59 @@ import java.util.Optional;
 
 @Service
 public class paymentservice {
+
     @Autowired
     private paymentrepo repository;
 
-    public void addNewPayment(paymenttime paymenttime,
+    @Autowired
+    private userrepo userRepo;
+
+    public String addNewPayment(paymenttime paymenttime,
                                             Integer amount,
                                             paymenttype paymenttype,
                                             confirmationtype confirmationtype,
-                                            String confirmation){
-        payment  newpayment=new payment();
+                                            String confirmation,
+                                            boolean isCompleted,
+                                            Long senderId,
+                                            Long recipientId){
+        Optional<user> optionalSender=userRepo.findById(senderId);
+        Optional<user> optionalRecipient=userRepo.findById(recipientId);
 
-        newpayment.setPaymenttime(paymenttime);
-        newpayment.setAmount(amount);
-        newpayment.setPaymenttype(paymenttype);
-        newpayment.setConfirmationtype(confirmationtype);
+        if(optionalSender.isPresent()){
+            user Sender=optionalSender.get();
+            if(optionalRecipient.isPresent()){
+                user Recipient=optionalRecipient.get();
+                if(Sender!=null && Recipient!=null){
+                    payment  newpayment=new payment();
 
-        if(confirmationtype.toString().equals("BYCODE")){
-            newpayment.setConfirmation(generateConfirmationCode());
-        }else{
-            newpayment.setConfirmation(confirmation);
+                    newpayment.setSender(Sender);
+                    newpayment.setReceiver(Recipient);
+                    newpayment.setPaymenttime(paymenttime);
+                    newpayment.setAmount(amount);
+                    newpayment.setPaymenttype(paymenttype);
+                    newpayment.setConfirmationtype(confirmationtype);
+                    newpayment.setCompleted(isCompleted);
+
+                    if(confirmationtype.toString().equals("BYCODE")){
+                        newpayment.setConfirmation(generateConfirmationCode());
+                    }else{
+                        newpayment.setConfirmation(confirmation);
+                    }
+
+                    repository.save(newpayment);
+                }
+                return "Recipient not found";
+            }
+            return "Sender not found";
         }
-
-        repository.save(newpayment);
+        return "Payment successful";
     }
 
     public void updatePayment(paymenttime paymenttime,
                               Integer amount,
                               paymenttype paymenttype,
                               confirmationtype confirmationtype,
+                              boolean isCompleted,
                               String confirmation, Long id){
         Optional<payment> updatepayment=repository.findById(id);
         if (updatepayment.isPresent()) {
@@ -71,6 +94,12 @@ public class paymentservice {
             } else {
                 updatedpayment.setConfirmation(confirmation);
             }
+            if(!isCompleted){
+                updatedpayment.setCompleted(updatedpayment.isCompleted());
+            }
+            else{
+                updatedpayment.setCompleted(isCompleted);
+            }
             repository.save(updatedpayment);
         }
     }
@@ -91,6 +120,48 @@ public class paymentservice {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:\'\",<.>/?";
         String pwd = RandomStringUtils.random( 20, characters );
         return pwd;
+    }
+
+    public  String completePayment(Long id){
+        Optional<payment> paymentFound = repository.findById(id);
+        if (paymentFound.isPresent()) {
+            payment Payment=paymentFound.get();
+            if(!Payment.isCompleted()){
+               Payment.setCompleted(true);
+               return "Payment done";
+            }
+            return "Unable to complete payment";
+        }
+        return "Payment not found";
+    }
+
+    public String useCode(String sender, String recipient, Long id){
+        Optional<payment> paymentFound = repository.findById(id);
+        if (paymentFound.isPresent()) {
+            payment Payment=paymentFound.get();
+            if(Payment.getConfirmation().equals(sender.concat(recipient) )&& Payment.getConfirmationtype().toString().equals("BYCODE")){
+                completePayment(id);
+                return "Code match confirmed payment succeeded";
+            }else{
+                return "Code do not match payment unsuccessful";
+            }
+        }
+        return "Sorry the payment cannot be found";
+    }
+
+    public  String useDate(String currentDate, Long id){
+
+        Optional<payment> paymentFound = repository.findById(id);
+        if (paymentFound.isPresent()) {
+            payment Payment=paymentFound.get();
+            if(Payment.getConfirmation().equals(currentDate)&& Payment.getConfirmationtype().toString().equals("BYDATE")){
+                completePayment(id);
+                return "Date match match confirmed payment succeeded";
+            }else{
+                return "Date do not match payment unsuccessful";
+            }
+        }
+        return "Sorry the payment cannot be found";
     }
 }
 
