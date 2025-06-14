@@ -17,6 +17,9 @@ public class paymentservice {
     private paymentrepo repository;
 
     @Autowired
+    private SharedData sharedData;
+
+    @Autowired
     private userrepo userRepo;
 
     public String addNewPayment(paymenttime paymenttime,
@@ -34,13 +37,20 @@ public class paymentservice {
             user Sender=optionalSender.get();
             if(optionalRecipient.isPresent()){
                 user Recipient=optionalRecipient.get();
-                if(Sender!=null && Recipient!=null){
+                if(Sender.getId()!=null && Recipient.getId()!=null){
                     payment  newpayment=new payment();
 
                     newpayment.setSender(Sender);
                     newpayment.setReceiver(Recipient);
                     newpayment.setPaymenttime(paymenttime);
-                    newpayment.setAmount(amount);
+                    if(sharedData.checkAmount(senderId)>=amount && paymenttype.toString().equals("SENT")) {
+                        newpayment.setAmount(amount);
+                    }
+                    else if(paymenttype.toString().equals("RECEIPTS")){
+                        newpayment.setAmount(amount);
+                    }else{
+                        return "Sorry insufficient balance";
+                    }
                     newpayment.setPaymenttype(paymenttype);
                     newpayment.setConfirmationtype(confirmationtype);
                     newpayment.setCompleted(isCompleted);

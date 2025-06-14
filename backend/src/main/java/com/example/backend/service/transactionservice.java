@@ -4,7 +4,9 @@ package com.example.backend.service;
 import com.example.backend.entity.platform;
 import com.example.backend.entity.transaction;
 import com.example.backend.entity.transactiontype;
+import com.example.backend.entity.user;
 import com.example.backend.repository.transactionrepo;
+import com.example.backend.repository.userrepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,18 +19,42 @@ public class transactionservice {
     @Autowired
     private transactionrepo repository;
 
+    @Autowired
+    private SharedData sharedData;
+
+    @Autowired
+    private userrepo userRepo;
+
     public void addNewTransaction(transactiontype transationtype,
                                   platform platform,
-                                  Integer amount
+                                  Integer amount,
+                                  Long userId
                                ){
-        transaction newtransaction=new transaction();
+        Optional<user> optionalUser=userRepo.findById(userId);
 
-        newtransaction.setPlatform(platform);
-        newtransaction.setAmount(amount);
-        newtransaction.setTransactiontype(transationtype);
+        if(optionalUser.isPresent()){
+            user User=optionalUser.get();
+
+            if(User.getId()!=null){
+                transaction newtransaction=new transaction();
+                newtransaction.setUser(User);
+                newtransaction.setPlatform(platform);
+                if(sharedData.checkAmount(userId)>=amount  && transationtype.toString().equals("WITHDRAWAL")) {
+                    newtransaction.setAmount(amount);
+                }
+                else if(transationtype.toString().equals("DEPOSIT")){
+                    newtransaction.setAmount(amount);
+                }
+                else{
+                    return;
+                }
+                newtransaction.setTransactiontype(transationtype);
 
 
-        repository.save(newtransaction);
+                repository.save(newtransaction);
+            }
+            }
+
     }
 
     public void updateTransaction(transactiontype transationtype,

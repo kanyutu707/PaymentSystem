@@ -40,6 +40,9 @@ public class user implements UserDetails {
     @OneToMany(mappedBy = "receiver")
     private Set<payment> received;
 
+    @OneToMany(mappedBy = "User")
+    private Set<transaction> User;
+
 
     public user() {
     }
@@ -97,7 +100,7 @@ public class user implements UserDetails {
         this.updatedAt = updatedAt;
     }
 
-    public user(Long id, String email, String firstName, String lastName, String password, Date createdAt, Date updatedAt, Set<payment> sent, Set<payment> received) {
+    public user(Long id, String email, String firstName, String lastName, String password, Date createdAt, Date updatedAt, Set<payment> sent, Set<payment> received, Set<transaction> user) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
@@ -107,6 +110,7 @@ public class user implements UserDetails {
         this.updatedAt = updatedAt;
         this.sent = sent;
         this.received = received;
+        User = user;
     }
 
     public Set<payment> getSent() {
@@ -137,6 +141,7 @@ public class user implements UserDetails {
                 ", updatedAt=" + updatedAt +
                 ", sent=" + sent +
                 ", received=" + received +
+                ", User=" + User +
                 '}';
     }
 

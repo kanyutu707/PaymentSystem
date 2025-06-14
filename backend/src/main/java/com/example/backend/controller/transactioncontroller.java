@@ -19,7 +19,8 @@ public class transactioncontroller {
             service.addNewTransaction(
                     request.getTransactiontype(),
                     request.getPlatform(),
-                    request.getAmount()
+                    request.getAmount(),
+                    request.getUser().getId()
             );
             return  ResponseEntity.ok("Transaction completed successfully");
         } catch (Exception e) {

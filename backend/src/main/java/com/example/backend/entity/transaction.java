@@ -15,6 +15,10 @@ public class transaction {
     @Enumerated(EnumType.STRING)
     private platform platform;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private  user User;
+
     public transaction() {
     }
 
@@ -50,11 +54,20 @@ public class transaction {
         this.platform = platform;
     }
 
-    public transaction(Long id, transactiontype transactiontype, Integer amount, platform platform) {
+    public user getUser() {
+        return User;
+    }
+
+    public void setUser(user user) {
+        User = user;
+    }
+
+    public transaction(Long id, transactiontype transactiontype, Integer amount, platform platform, user user) {
         this.id = id;
         this.transactiontype = transactiontype;
         this.amount = amount;
         this.platform = platform;
+        User = user;
     }
 
     @Override
@@ -64,6 +77,7 @@ public class transaction {
                 ", transactiontype=" + transactiontype +
                 ", amount=" + amount +
                 ", platform=" + platform +
+                ", User=" + User +
                 '}';
     }
 }
