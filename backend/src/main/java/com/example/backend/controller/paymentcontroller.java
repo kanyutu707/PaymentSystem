@@ -14,20 +14,20 @@ import java.util.Date;
 @RequestMapping(path = "/payment")
 public class paymentcontroller {
 
-
-    SimpleDateFormat ft=new SimpleDateFormat("dd-MM-yyyy");
-    String formattedDate=ft.format(new Date());
+    SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy");
 
     @Autowired
     private paymentservice service;
 
     @PostMapping(path = "/create")
-    public ResponseEntity<String> addPayment(@RequestBody payment request) {
+    public ResponseEntity<String> addPayment(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody payment request) {
         try {
             service.addNewPayment(
+                    authHeader,
                     request.getPaymenttime(),
                     request.getAmount(),
-                    request.getPaymenttype(),
                     request.getConfirmationtype(),
                     request.getConfirmation(),
                     request.isCompleted(),
@@ -35,50 +35,68 @@ public class paymentcontroller {
                     request.getReceiver().getId()
             );
             return ResponseEntity.ok("Payment added successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid input: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error adding payment: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("Server error while adding payment: " + e.getMessage());
         }
     }
 
     @PutMapping(path = "/update/{id}")
-    public  ResponseEntity<String> updatePayment(@RequestBody payment request, @PathVariable Long id){
-        try{
+    public ResponseEntity<String> updatePayment(@RequestBody payment request, @PathVariable Long id) {
+        try {
             service.updatePayment(
                     request.getPaymenttime(),
                     request.getAmount(),
-                    request.getPaymenttype(),
                     request.getConfirmationtype(),
                     request.isCompleted(),
                     request.getConfirmation(),
                     id
             );
             return ResponseEntity.ok("Payment updated successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid input: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error updating payment: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("Server error while updating payment: " + e.getMessage());
         }
-        }
-
-    @GetMapping(path = "/getAll")
-    public @ResponseBody Iterable<payment> getAllPayments(){
-        return service.getAllPayments();
     }
 
-    @GetMapping(path="/get/{id}")
-    public ResponseEntity<payment> getById(@PathVariable Long id) {
-       return service.getById(id);
+    @GetMapping(path = "/getAll")
+    public @ResponseBody ResponseEntity<Iterable<payment>> getAllPayments() {
+        try {
+            return ResponseEntity.ok(service.getAllPayments());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping(path = "/get/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        try {
+            return service.getById(id);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error fetching payment by ID: " + e.getMessage());
+        }
     }
 
     @PutMapping(path = "/payByDate/{id}")
-    public String updateByDate(@PathVariable Long id){
-        service.useDate(formattedDate, id);
-        return "Payment successful";
+    public ResponseEntity<String> updateByDate(@PathVariable Long id) {
+        try {
+            String formattedDate = ft.format(new Date());
+            service.useDate(formattedDate, id);
+            return ResponseEntity.ok("Payment processed using date");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error processing payment by date: " + e.getMessage());
+        }
     }
 
     @PutMapping(path = "/payByCode/{id}")
-    public String updateByCode(@RequestParam String sender, @RequestParam String recipient, @PathVariable Long id){
-        service.useCode(sender, recipient, id);
-        return "Payment successful";
+    public ResponseEntity<String> updateByCode(@RequestParam String sender, @RequestParam String recipient, @PathVariable Long id) {
+        try {
+            service.useCode(sender, recipient, id);
+            return ResponseEntity.ok("Payment processed using code");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error processing payment by code: " + e.getMessage());
+        }
     }
-
-
 }

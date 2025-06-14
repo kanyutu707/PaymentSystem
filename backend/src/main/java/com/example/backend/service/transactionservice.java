@@ -1,6 +1,5 @@
 package com.example.backend.service;
 
-
 import com.example.backend.entity.platform;
 import com.example.backend.entity.transaction;
 import com.example.backend.entity.transactiontype;
@@ -25,78 +24,59 @@ public class transactionservice {
     @Autowired
     private userrepo userRepo;
 
-    public void addNewTransaction(transactiontype transationtype,
+    public void addNewTransaction(String authHeader,
+                                  transactiontype transactiontype,
                                   platform platform,
                                   Integer amount,
-                                  Long userId
-                               ){
-        Optional<user> optionalUser=userRepo.findById(userId);
+                                  Long userId) {
 
-        if(optionalUser.isPresent()){
-            user User=optionalUser.get();
+        user user = userRepo.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-            if(User.getId()!=null){
-                transaction newtransaction=new transaction();
-                newtransaction.setUser(User);
-                newtransaction.setPlatform(platform);
-                if(sharedData.checkAmount(userId)>=amount  && transationtype.toString().equals("WITHDRAWAL")) {
-                    newtransaction.setAmount(amount);
-                }
-                else if(transationtype.toString().equals("DEPOSIT")){
-                    newtransaction.setAmount(amount);
-                }
-                else{
-                    return;
-                }
-                newtransaction.setTransactiontype(transationtype);
-
-
-                repository.save(newtransaction);
-            }
-            }
-
-    }
-
-    public void updateTransaction(transactiontype transationtype,
-                                  platform platform,
-                                  Integer amount,
-                                  Long id){
-        Optional<transaction> updatetransaction=repository.findById(id);
-        if(updatetransaction.isPresent()){
-            transaction updatedtransaction=updatetransaction.get();
-            if(transationtype==null){
-                updatedtransaction.setTransactiontype(updatedtransaction.getTransactiontype());
-            }
-            else{
-                updatedtransaction.setTransactiontype(transationtype);
-            }
-            if(platform==null){
-                updatedtransaction.setPlatform(updatedtransaction.getPlatform());
-            }
-            else{
-                updatedtransaction.setPlatform(platform);
-            }
-            if(amount==null){
-                updatedtransaction.setAmount(updatedtransaction.getAmount());
-            }
-            else{
-                updatedtransaction.setAmount(amount);
-            }
-
-            repository.save(updatedtransaction);
+        if (amount == null || amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than 0");
         }
+
+        if (transactiontype == null) {
+            throw new IllegalArgumentException("Transaction type is required");
+        }
+
+        if (transactiontype == transactiontype.WITHDRAWAL &&
+                sharedData.checkAmount(authHeader) < amount) {
+            throw new IllegalArgumentException("Insufficient balance for withdrawal");
+        }
+
+        transaction newTransaction = new transaction();
+        newTransaction.setUser(user);
+        newTransaction.setPlatform(platform);
+        newTransaction.setTransactiontype(transactiontype);
+        newTransaction.setAmount(amount);
+
+        repository.save(newTransaction);
     }
-    public Iterable<transaction> getAllTransactions(){
+
+    public void updateTransaction(transactiontype transactiontype,
+                                  platform platform,
+                                  Integer amount,
+                                  Long id) {
+
+        transaction existingTransaction = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+
+        if (transactiontype != null) existingTransaction.setTransactiontype(transactiontype);
+        if (platform != null) existingTransaction.setPlatform(platform);
+        if (amount != null && amount > 0) existingTransaction.setAmount(amount);
+
+        repository.save(existingTransaction);
+    }
+
+    public Iterable<transaction> getAllTransactions() {
         return repository.findAll();
     }
 
-    public ResponseEntity<transaction> getById(Long id){
-        Optional<transaction> transactionfound=repository.findById(id);
-        if(transactionfound.isPresent()){
-            return ResponseEntity.ok(transactionfound.get());
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<transaction> getById(Long id) {
+        return repository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
-
-
 }

@@ -3,10 +3,10 @@ package com.example.backend.service;
 import com.example.backend.entity.*;
 import com.example.backend.repository.paymentrepo;
 import com.example.backend.repository.userrepo;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Optional;
 
@@ -22,156 +22,115 @@ public class paymentservice {
     @Autowired
     private userrepo userRepo;
 
-    public String addNewPayment(paymenttime paymenttime,
-                                            Integer amount,
-                                            paymenttype paymenttype,
-                                            confirmationtype confirmationtype,
-                                            String confirmation,
-                                            boolean isCompleted,
-                                            Long senderId,
-                                            Long recipientId){
-        Optional<user> optionalSender=userRepo.findById(senderId);
-        Optional<user> optionalRecipient=userRepo.findById(recipientId);
+    public void addNewPayment(String authHeader,
+                              paymenttime paymenttime,
+                              Integer amount,
+                              confirmationtype confirmationtype,
+                              String confirmation,
+                              boolean isCompleted,
+                              Long senderId,
+                              Long recipientId) {
 
-        if(optionalSender.isPresent()){
-            user Sender=optionalSender.get();
-            if(optionalRecipient.isPresent()){
-                user Recipient=optionalRecipient.get();
-                if(Sender.getId()!=null && Recipient.getId()!=null){
-                    payment  newpayment=new payment();
+        user sender = userRepo.findById(senderId)
+                .orElseThrow(() -> new IllegalArgumentException("Sender not found"));
 
-                    newpayment.setSender(Sender);
-                    newpayment.setReceiver(Recipient);
-                    newpayment.setPaymenttime(paymenttime);
-                    if(sharedData.checkAmount(senderId)>=amount && paymenttype.toString().equals("SENT")) {
-                        newpayment.setAmount(amount);
-                    }
-                    else if(paymenttype.toString().equals("RECEIPTS")){
-                        newpayment.setAmount(amount);
-                    }else{
-                        return "Sorry insufficient balance";
-                    }
-                    newpayment.setPaymenttype(paymenttype);
-                    newpayment.setConfirmationtype(confirmationtype);
-                    newpayment.setCompleted(isCompleted);
+        user recipient = userRepo.findById(recipientId)
+                .orElseThrow(() -> new IllegalArgumentException("Recipient not found"));
 
-                    if(confirmationtype.toString().equals("BYCODE")){
-                        newpayment.setConfirmation(generateConfirmationCode());
-                    }else{
-                        newpayment.setConfirmation(confirmation);
-                    }
-
-                    repository.save(newpayment);
-                }
-                return "Recipient not found";
-            }
-            return "Sender not found";
+        if (sharedData.checkAmount(authHeader) < amount) {
+            throw new IllegalArgumentException("Insufficient balance");
         }
-        return "Payment successful";
+
+        payment newPayment = new payment();
+        newPayment.setSender(sender);
+        newPayment.setReceiver(recipient);
+        newPayment.setPaymenttime(paymenttime);
+        newPayment.setAmount(amount);
+        newPayment.setConfirmationtype(confirmationtype);
+        newPayment.setCompleted(isCompleted);
+
+        if (confirmationtype == confirmationtype.BYCODE) {
+            newPayment.setConfirmation(generateConfirmationCode());
+        } else {
+            newPayment.setConfirmation(confirmation);
+        }
+
+        repository.save(newPayment);
     }
 
     public void updatePayment(paymenttime paymenttime,
                               Integer amount,
-                              paymenttype paymenttype,
                               confirmationtype confirmationtype,
                               boolean isCompleted,
-                              String confirmation, Long id){
-        Optional<payment> updatepayment=repository.findById(id);
-        if (updatepayment.isPresent()) {
-            payment updatedpayment=updatepayment.get();
-            if (paymenttime == null) {
-                updatedpayment.setPaymenttime(updatedpayment.getPaymenttime());
-            } else {
-                updatedpayment.setPaymenttime(paymenttime);
-            }
-            if (amount == null) {
-                updatedpayment.setAmount(updatedpayment.getAmount());
-            } else {
-                updatedpayment.setAmount(amount);
-            }
-            if (paymenttype == null) {
-                updatedpayment.setPaymenttype(updatedpayment.getPaymenttype());
-            } else {
-                updatedpayment.setPaymenttype(paymenttype);
-            }
-            if (confirmationtype == null) {
-                updatedpayment.setConfirmationtype(updatedpayment.getConfirmationtype());
-            } else {
-                updatedpayment.setConfirmationtype(confirmationtype);
-            }
-            if (confirmation == null) {
-                updatedpayment.setConfirmation(updatedpayment.getConfirmation());
-            } else {
-                updatedpayment.setConfirmation(confirmation);
-            }
-            if(!isCompleted){
-                updatedpayment.setCompleted(updatedpayment.isCompleted());
-            }
-            else{
-                updatedpayment.setCompleted(isCompleted);
-            }
-            repository.save(updatedpayment);
-        }
+                              String confirmation,
+                              Long id) {
+
+        payment updatedPayment = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Payment not found"));
+
+        if (paymenttime != null) updatedPayment.setPaymenttime(paymenttime);
+        if (amount != null) updatedPayment.setAmount(amount);
+        if (confirmationtype != null) updatedPayment.setConfirmationtype(confirmationtype);
+        if (confirmation != null) updatedPayment.setConfirmation(confirmation);
+        updatedPayment.setCompleted(isCompleted);
+
+        repository.save(updatedPayment);
     }
 
-    public Iterable<payment> getAllPayments(){
+    public Iterable<payment> getAllPayments() {
         return repository.findAll();
     }
 
     public ResponseEntity<payment> getById(Long id) {
-        Optional<payment> paymentFound = repository.findById(id);
-        if (paymentFound.isPresent()) {
-            return ResponseEntity.ok(paymentFound.get());
-        }
-        return ResponseEntity.notFound().build();
+        return repository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    public String generateConfirmationCode(){
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:\'\",<.>/?";
-        String pwd = RandomStringUtils.random( 20, characters );
-        return pwd;
+    public String generateConfirmationCode() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
+        return RandomStringUtils.random(20, characters);
     }
 
-    public  String completePayment(Long id){
+    public String completePayment(Long id) {
         Optional<payment> paymentFound = repository.findById(id);
         if (paymentFound.isPresent()) {
-            payment Payment=paymentFound.get();
-            if(!Payment.isCompleted()){
-               Payment.setCompleted(true);
-               return "Payment done";
+            payment payment = paymentFound.get();
+            if (!payment.isCompleted()) {
+                payment.setCompleted(true);
+                repository.save(payment);
+                return "Payment completed";
+            } else {
+                return "Payment already completed";
             }
-            return "Unable to complete payment";
+        } else {
+            return "Payment not found";
         }
-        return "Payment not found";
     }
 
-    public String useCode(String sender, String recipient, Long id){
+    public String useCode(String sender, String recipient, Long id) {
         Optional<payment> paymentFound = repository.findById(id);
-        if (paymentFound.isPresent()) {
-            payment Payment=paymentFound.get();
-            if(Payment.getConfirmation().equals(sender.concat(recipient) )&& Payment.getConfirmationtype().toString().equals("BYCODE")){
-                completePayment(id);
-                return "Code match confirmed payment succeeded";
-            }else{
-                return "Code do not match payment unsuccessful";
-            }
+        if (paymentFound.isEmpty()) return "Payment not found";
+
+        payment payment = paymentFound.get();
+        if (payment.getConfirmationtype() == confirmationtype.BYCODE &&
+                payment.getConfirmation().equals(sender + recipient)) {
+            return completePayment(id);
+        } else {
+            return "Code does not match. Payment unsuccessful";
         }
-        return "Sorry the payment cannot be found";
     }
 
-    public  String useDate(String currentDate, Long id){
-
+    public String useDate(String currentDate, Long id) {
         Optional<payment> paymentFound = repository.findById(id);
-        if (paymentFound.isPresent()) {
-            payment Payment=paymentFound.get();
-            if(Payment.getConfirmation().equals(currentDate)&& Payment.getConfirmationtype().toString().equals("BYDATE")){
-                completePayment(id);
-                return "Date match match confirmed payment succeeded";
-            }else{
-                return "Date do not match payment unsuccessful";
-            }
+        if (paymentFound.isEmpty()) return "Payment not found";
+
+        payment payment = paymentFound.get();
+        if (payment.getConfirmationtype() == confirmationtype.BYDATE &&
+                payment.getConfirmation().equals(currentDate)) {
+            return completePayment(id);
+        } else {
+            return "Date does not match. Payment unsuccessful";
         }
-        return "Sorry the payment cannot be found";
     }
 }
-

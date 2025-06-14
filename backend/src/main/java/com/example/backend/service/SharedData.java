@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class SharedData {
@@ -19,34 +18,31 @@ public class SharedData {
     @Autowired
     private transactionrepo transactRepo;
 
+    @Autowired
+    private DecodeJwt decodeJwt;
 
-    public Integer checkAmount(Long id){
-        List<payment> Payments =paymentRepo.findAll();
-        List<transaction> Transactions=transactRepo.findAll();
+    public Integer checkAmount(String token) {
+        Long userId = decodeJwt.decodeJwt(token); // Decode once
 
-        Integer additions=0;
-        Integer subtractions=0;
+        int receivedPayments = paymentRepo.findAll().stream()
+                .filter(p -> p.getReceiver().getId().equals(userId))
+                .mapToInt(payment::getAmount)
+                .sum();
 
+        int sentPayments = paymentRepo.findAll().stream()
+                .filter(p -> p.getSender().getId().equals(userId))
+                .mapToInt(payment::getAmount)
+                .sum();
 
-            for (int payment = 0; payment < Payments.size(); payment++) {
-                if(Payments.get(payment).getPaymenttype().toString().equals("RECEIPTS") && ( Objects.equals(Payments.get(payment).getReceiver().getId(), id))) {
-                    additions+=Payments.get(payment).getAmount();
-                }else{
-                    subtractions+=Payments.get(payment).getAmount();
-                }
-            }
+        int receivedTransactions = transactRepo.findAll().stream()
+                .filter(t -> (t.getUser().getId().equals(userId) && t.getTransactiontype().toString().equals("DEPOSIT")))
+                .mapToInt(transaction::getAmount)
+                .sum();
+        int sentTransactions = transactRepo.findAll().stream()
+                .filter(t -> (t.getUser().getId().equals(userId) && t.getTransactiontype().toString().equals("WITHDRAWAL")))
+                .mapToInt(transaction::getAmount)
+                .sum();
 
-            for(int transaction=0; transaction< Transactions.size(); transaction++){
-                if(Transactions.get(transaction).getTransactiontype().toString().equals("DEPOSIT") && Objects.equals(Transactions.get(transaction).getUser().getId(), id)){
-                    additions+=Transactions.get(transaction).getAmount();
-                }else{
-                    subtractions+=Transactions.get(transaction).getAmount();
-                }
-            }
-
-
-
-        return additions-subtractions;
+        return (receivedPayments + receivedTransactions)-( sentTransactions- sentPayments);
     }
-
 }

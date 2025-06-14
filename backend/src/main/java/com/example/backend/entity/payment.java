@@ -9,8 +9,7 @@ public class payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private paymenttype paymenttype;
+
 
     private Integer amount;
 
@@ -45,13 +44,6 @@ public class payment {
         this.id = id;
     }
 
-    public paymenttype getPaymenttype() {
-        return paymenttype;
-    }
-
-    public void setPaymenttype(paymenttype paymenttype) {
-        this.paymenttype = paymenttype;
-    }
 
     public Integer getAmount() {
         return amount;
@@ -109,9 +101,8 @@ public class payment {
         this.receiver = receiver;
     }
 
-    public payment(Long id, paymenttype paymenttype, Integer amount, paymenttime paymenttime, confirmationtype confirmationtype, boolean isCompleted, String confirmation, user sender, user receiver) {
+    public payment(Long id,  Integer amount, paymenttime paymenttime, confirmationtype confirmationtype, boolean isCompleted, String confirmation, user sender, user receiver) {
         this.id = id;
-        this.paymenttype = paymenttype;
         this.amount = amount;
         this.paymenttime = paymenttime;
         this.confirmationtype = confirmationtype;
@@ -125,7 +116,6 @@ public class payment {
     public String toString() {
         return "payment{" +
                 "id=" + id +
-                ", paymenttype=" + paymenttype +
                 ", amount=" + amount +
                 ", paymenttime=" + paymenttime +
                 ", confirmationtype=" + confirmationtype +
