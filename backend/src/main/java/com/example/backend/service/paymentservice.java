@@ -22,16 +22,18 @@ public class paymentservice {
     @Autowired
     private userrepo userRepo;
 
+    @Autowired
+    private DecodeJwt decodeJwt;
+
     public void addNewPayment(String authHeader,
                               paymenttime paymenttime,
                               Integer amount,
                               confirmationtype confirmationtype,
                               String confirmation,
                               boolean isCompleted,
-                              Long senderId,
                               Long recipientId) {
 
-        user sender = userRepo.findById(senderId)
+        user sender = userRepo.findById(decodeJwt.decodeJwt(authHeader))
                 .orElseThrow(() -> new IllegalArgumentException("Sender not found"));
 
         user recipient = userRepo.findById(recipientId)
@@ -118,6 +120,49 @@ public class paymentservice {
             return completePayment(id);
         } else {
             return "Code does not match. Payment unsuccessful";
+        }
+    }
+
+    public void payByAccount(String accountNo,
+                             String authHeader,
+                             paymenttime paymenttime,
+                             Integer amount,
+                             confirmationtype confirmationtype,
+                             String confirmation,
+                             boolean isCompleted) {
+
+        if (accountNo == null || accountNo.isEmpty()) {
+            throw new IllegalArgumentException("Receiver account number is required.");
+        }
+
+        Optional<user> userOptional = userRepo.findByAccountNo(accountNo);
+        user sender = userRepo.findById(decodeJwt.decodeJwt(authHeader))
+                .orElseThrow(() -> new IllegalArgumentException("Sender not found"));
+
+        if (sharedData.checkAmount(authHeader) < amount) {
+            throw new IllegalArgumentException("Insufficient balance");
+        }
+
+        if (userOptional.isPresent()) {
+            user userFound = userOptional.get();
+
+            payment newPayment = new payment();
+            newPayment.setReceiver(userFound);
+            newPayment.setSender(sender);
+            newPayment.setPaymenttime(paymenttime);
+            newPayment.setAmount(amount);
+            newPayment.setConfirmationtype(confirmationtype);
+            newPayment.setCompleted(isCompleted);
+
+            if (confirmationtype == confirmationtype.BYCODE) {
+                newPayment.setConfirmation(generateConfirmationCode());
+            } else {
+                newPayment.setConfirmation(confirmation);
+            }
+
+            repository.save(newPayment);
+        } else {
+            throw new IllegalArgumentException("Recipient with account number not found.");
         }
     }
 

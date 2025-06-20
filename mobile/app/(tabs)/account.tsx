@@ -1,14 +1,50 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Image } from 'expo-image'
 import { useRouter } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const account = () => {
+
+    type User={
+    firstName: string;
+    email: string;
+    lastName: string;
+    idNo: Number;
+    accountNo: string;
+    phoneNo: string
+  }
+
   const router = useRouter();
+  const [user, setUser]=useState<User | null>(null);
+
+  const getUser=async()=>{
+    try {
+      const jsonValue=await AsyncStorage.getItem('userdetails');
+      return jsonValue!=null?JSON.parse(jsonValue):null;
+    } catch (error) {
+      console.error('Failed to load user data:', error);
+      return null;
+    }
+  }
+ useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await getUser();
+      setUser(userData);
+    };
+
+    fetchUser();
+  }, []);
   
+  const clearSessions=()=>{
+    AsyncStorage.clear();
+    router.navigate('../signin')
+  }
   return (
+    
     <SafeAreaView style={styles.container}>
+      {user?(<>
       <ScrollView 
         style={styles.scrollContainer} 
         showsVerticalScrollIndicator={false}
@@ -23,7 +59,7 @@ const account = () => {
             />
             <View style={styles.avatarBorder} />
           </View>
-          <Text style={styles.userName}>John Oloo</Text>
+          <Text style={styles.userName}>{user.firstName} {user.lastName}</Text>
           <View style={styles.goldBadge}>
             <Text style={styles.goldBadgeText}>GOLD MEMBER</Text>
           </View>
@@ -36,7 +72,7 @@ const account = () => {
             <View style={styles.iconPlaceholder}>📱</View>
             <View style={styles.detailContent}>
               <Text style={styles.detailLabel}>Phone Number</Text>
-              <Text style={styles.detailValue}>000-0000-0000</Text>
+              <Text style={styles.detailValue}>{user.phoneNo}</Text>
             </View>
           </View>
 
@@ -46,7 +82,7 @@ const account = () => {
             <View style={styles.iconPlaceholder}>✉️</View>
             <View style={styles.detailContent}>
               <Text style={styles.detailLabel}>Email Address</Text>
-              <Text style={styles.detailValue}>abc@abc.com</Text>
+              <Text style={styles.detailValue}>{user.email}</Text>
             </View>
           </View>
 
@@ -56,7 +92,7 @@ const account = () => {
             <View style={styles.iconPlaceholder}>🏦</View>
             <View style={styles.detailContent}>
               <Text style={styles.detailLabel}>Account Number</Text>
-              <Text style={styles.detailValue}>RDSDEE434</Text>
+              <Text style={styles.detailValue}>{user.accountNo}</Text>
             </View>
           </View>
         </View>
@@ -71,13 +107,16 @@ const account = () => {
         </View>
 
         <TouchableOpacity 
-          onPress={() => router.navigate('../signin')} 
+          onPress={clearSessions} 
           style={styles.logoutButton}
           activeOpacity={0.8}
         >
           <Text style={styles.logoutText}>LOGOUT</Text>
         </TouchableOpacity>
       </ScrollView>
+      
+      </>):(<Text>Loading user data ...</Text>)}
+      
     </SafeAreaView>
   )
 }

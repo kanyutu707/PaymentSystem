@@ -5,6 +5,7 @@ import com.example.backend.dtos.RegisterUserDto;
 import com.example.backend.entity.user;
 import com.example.backend.repository.userrepo;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +38,12 @@ public class AuthenticationService {
                 User.setLastName(input.getLastName());
                 User.setEmail(input.getEmail());
                 User.setPassword(passwordEncoder.encode(input.getPassword()));
+                User.setIdNo(input.getIdNo());
+                User.setUser(input.getUser());
+                User.setSent(input.getSent());
+                User.setReceived(input.getReceived());
+                User.setAccountNo(generateAccountNo());
+                User.setPhoneNo(input.getPhoneNo());
 
         return userRepository.save(User);
 
@@ -51,6 +58,11 @@ public class AuthenticationService {
 
         );
         return userRepository.findByEmail(input.getEmail()).orElseThrow();
+    }
+
+    public String generateAccountNo() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        return RandomStringUtils.random(8, characters);
     }
 }
 

@@ -43,6 +43,6 @@ public class SharedData {
                 .mapToInt(transaction::getAmount)
                 .sum();
 
-        return (receivedPayments + receivedTransactions)-( sentTransactions- sentPayments);
+        return (receivedPayments + receivedTransactions)-( sentTransactions + sentPayments);
     }
 }

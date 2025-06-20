@@ -29,8 +29,7 @@ public class transactioncontroller {
                     token,
                     request.getTransactiontype(),
                     request.getPlatform(),
-                    request.getAmount(),
-                    request.getUser().getId()
+                    request.getAmount()
             );
 
             return ResponseEntity.ok("Transaction completed successfully");

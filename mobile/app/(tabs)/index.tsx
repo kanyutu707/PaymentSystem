@@ -4,21 +4,123 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 
 export default function Index() {
+  const apiUrl = Constants?.expoConfig?.extra?.apiUrl;
+  const [deposit, setDeposit] = useState(0);
+  const [withdrawal, setWithdrawal] = useState(0);
+  const [received, setReceived] = useState(0);
+  const [sent, setSent] = useState(0);
+  const [user, setUser] = useState('');
+  const [balance, setBalance] = useState(0);
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('token');
+      return value ?? null;
+    } catch (e) {
+      console.error('Error fetching token:', e);
+      return null;
+    }
+  };
+
+
+
+  useEffect(() => {
+    if (!apiUrl) {
+      return;
+    }
+    getDeposits(),
+      getWithdrawals(),
+      getSent(),
+      getReceived(),
+      fetchUser(),
+      getBalance()
+  }, []);
+
+  const getDeposits = async () => {
+    const token = await getData();
+    const response = await fetch(`${apiUrl}/money/deposits`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const result = await response.json();
+    setDeposit(result);
+  }
+
+   const getBalance=async ()=>{
+    const token = await getData();
+    const response=await fetch(`${apiUrl}/money/balance`,{
+      headers:{
+        'Authorization':`Bearer ${token}`
+      }
+    });
+    const result=await response.json();
+    setBalance(result);
+  }
+
+  const getWithdrawals = async () => {
+    const token = await getData();
+    const response = await fetch(`${apiUrl}/money/withdrawals`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const result = await response.json();
+    setWithdrawal(result);
+  }
+  const getReceived = async () => {
+    const token = await getData();
+    const response = await fetch(`${apiUrl}/money/received`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const result = await response.json();
+    setReceived(result);
+  }
+  const getSent = async () => {
+    const token = await getData();
+    const response = await fetch(`${apiUrl}/money/sent`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const result = await response.json();
+    setSent(result);
+  }
+
+  const getUser = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('userdetails');
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch (error) {
+      console.error('Failed to load user data:', error);
+      return null;
+    }
+  }
+
+  const fetchUser = async () => {
+    const userData = await getUser();
+    setUser(userData.accountNo);
+  };
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-      
+
         <View style={styles.indexbal}>
           <View style={styles.balanceContent}>
             <View style={styles.indexSecondCol}>
               <Text style={styles.indexBalTitle}>Total Balance</Text>
-              <Text style={styles.indexBalNum}>$5,000.00</Text>
+              <Text style={styles.indexBalNum}>$ {balance}</Text>
               <Text style={styles.balanceSubtext}>Available balance</Text>
             </View>
             <View style={styles.balanceIconContainer}>
@@ -35,7 +137,7 @@ export default function Index() {
             </View>
             <Text style={styles.accountnumbertitle}>Account Number</Text>
           </View>
-          <Text style={styles.accountnumber}>BR2C CMNS RDDW E</Text>
+          <Text style={styles.accountnumber}>{user}</Text>
           <View style={styles.accountTypeBadge}>
             <MaterialCommunityIcons name="star" size={16} color="orange" />
             <Text style={styles.accountType}>PREMIUM ACCOUNT</Text>
@@ -51,10 +153,10 @@ export default function Index() {
                 </View>
                 <Text style={styles.extraTitle}>Deposits</Text>
               </View>
-              <Text style={styles.extraValue}>$15,000</Text>
+              <Text style={styles.extraValue}>{deposit}</Text>
               <Text style={styles.extraDate}>Last: 15/2/2020</Text>
             </View>
-            
+
             <View style={[styles.extra, styles.withdrawCard]}>
               <View style={styles.extraHeader}>
                 <View style={styles.iconCircleBlack}>
@@ -62,11 +164,11 @@ export default function Index() {
                 </View>
                 <Text style={styles.extraTitle}>Withdrawals</Text>
               </View>
-              <Text style={styles.extraValue}>$10,500</Text>
+              <Text style={styles.extraValue}>{withdrawal}</Text>
               <Text style={styles.extraDate}>Last: 15/2/2020</Text>
             </View>
           </View>
-          
+
           <View style={styles.extrarow}>
             <View style={[styles.extra, styles.receivedCard]}>
               <View style={styles.extraHeader}>
@@ -75,10 +177,10 @@ export default function Index() {
                 </View>
                 <Text style={styles.extraTitle}>Received</Text>
               </View>
-              <Text style={styles.extraValue}>$8,200</Text>
+              <Text style={styles.extraValue}>{received}</Text>
               <Text style={styles.extraDate}>Last: 15/2/2020</Text>
             </View>
-            
+
             <View style={[styles.extra, styles.sentCard]}>
               <View style={styles.extraHeader}>
                 <View style={styles.iconCircleBlack}>
@@ -86,7 +188,7 @@ export default function Index() {
                 </View>
                 <Text style={styles.extraTitle}>Sent</Text>
               </View>
-              <Text style={styles.extraValue}>$5,700</Text>
+              <Text style={styles.extraValue}>{sent}</Text>
               <Text style={styles.extraDate}>Last: 15/2/2020</Text>
             </View>
           </View>
@@ -116,16 +218,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
-  
+
   scrollView: {
     flex: 1,
   },
-  
+
   scrollContent: {
     padding: 20,
     paddingBottom: 40,
   },
-  
+
   indexbal: {
     height: 160,
     width: '100%',
@@ -135,7 +237,7 @@ const styles = StyleSheet.create({
     elevation: 12,
     overflow: 'hidden',
   },
-  
+
   balanceContent: {
     flex: 1,
     flexDirection: 'row',
@@ -145,7 +247,7 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     zIndex: 2,
   },
-  
+
   balanceGradientOverlay: {
     position: 'absolute',
     top: 0,
@@ -156,11 +258,11 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     borderBottomRightRadius: 24,
   },
-  
+
   indexSecondCol: {
     flex: 1,
   },
-  
+
   indexBalTitle: {
     fontSize: 18,
     fontWeight: '600',
@@ -168,22 +270,22 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     opacity: 0.9,
   },
-  
+
   indexBalNum: {
     fontSize: 36,
     fontWeight: '800',
     color: 'orange',
     marginBottom: 6,
-  
+
   },
-  
+
   balanceSubtext: {
     fontSize: 15,
     color: 'white',
     fontWeight: '500',
     opacity: 0.8,
   },
-  
+
   balanceIconContainer: {
     backgroundColor: 'white',
     borderRadius: 60,
@@ -202,30 +304,30 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'orange',
     elevation: 8,
-  
+
   },
-  
+
   accountHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
   },
-  
+
   accountIconCircle: {
     backgroundColor: 'orange',
     borderRadius: 25,
     padding: 12,
     marginRight: 16,
     elevation: 4,
- 
+
   },
-  
+
   accountnumbertitle: {
     fontSize: 16,
     color: "black",
     fontWeight: '700',
   },
-  
+
   accountnumber: {
     fontSize: 22,
     color: "black",
@@ -233,7 +335,7 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     marginBottom: 16,
   },
-  
+
   accountTypeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -244,7 +346,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     elevation: 4,
   },
-  
+
   accountType: {
     fontSize: 13,
     color: "white",
@@ -256,13 +358,13 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 24,
   },
-  
+
   extrarow: {
     flexDirection: "row",
     justifyContent: 'space-between',
     marginBottom: 20,
   },
-  
+
   extra: {
     backgroundColor: "white",
     width: "48%",
@@ -270,64 +372,64 @@ const styles = StyleSheet.create({
     padding: 20,
     elevation: 8,
   },
-  
+
   depositCard: {
     borderWidth: 2,
     borderColor: 'orange',
   },
-  
+
   withdrawCard: {
     borderWidth: 2,
     borderColor: 'black',
   },
-  
+
   receivedCard: {
     borderWidth: 2,
     borderColor: 'orange',
   },
-  
+
   sentCard: {
     borderWidth: 2,
     borderColor: 'black',
   },
-  
+
   extraHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
   },
-  
+
   iconCircleOrange: {
     backgroundColor: 'orange',
     borderRadius: 30,
     padding: 10,
     marginRight: 12,
     elevation: 4,
- 
+
   },
-  
+
   iconCircleBlack: {
     backgroundColor: 'black',
     borderRadius: 30,
     padding: 10,
     marginRight: 12,
     elevation: 4,
-   
+
   },
-  
+
   extraTitle: {
     fontSize: 15,
     fontWeight: '700',
     color: 'black',
   },
-  
+
   extraValue: {
     fontSize: 26,
     fontWeight: '800',
     color: 'black',
     marginBottom: 8,
   },
-  
+
   extraDate: {
     fontSize: 13,
     fontWeight: '600',
@@ -344,24 +446,24 @@ const styles = StyleSheet.create({
     elevation: 10,
 
   },
-  
+
   membershipContent: {
     flexDirection: "row",
     justifyContent: 'space-between',
     alignItems: "center",
   },
-  
+
   membershipInfo: {
     flex: 1,
   },
-  
+
   membershiptitle: {
     fontSize: 18,
     fontWeight: '700',
     color: "black",
     marginBottom: 16,
   },
-  
+
   goldBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -373,19 +475,19 @@ const styles = StyleSheet.create({
     elevation: 6,
 
   },
-  
+
   membership: {
     fontSize: 15,
     fontWeight: '800',
     color: 'white',
     marginLeft: 8,
   },
-  
+
   membershipIconContainer: {
     backgroundColor: 'black',
     borderRadius: 40,
     padding: 12,
     elevation: 8,
- 
+
   },
 })

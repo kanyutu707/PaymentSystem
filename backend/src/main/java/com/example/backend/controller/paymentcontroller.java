@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.entity.confirmationtype;
 import com.example.backend.entity.payment;
 import com.example.backend.service.paymentservice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ public class paymentcontroller {
     @Autowired
     private paymentservice service;
 
-    @PostMapping(path = "/create")
-    public ResponseEntity<String> addPayment(
+    @PostMapping(path = "/createCode")
+    public ResponseEntity<String> addPaymentCode(
             @RequestHeader("Authorization") String authHeader,
             @RequestBody payment request) {
         try {
@@ -28,11 +29,98 @@ public class paymentcontroller {
                     authHeader,
                     request.getPaymenttime(),
                     request.getAmount(),
-                    request.getConfirmationtype(),
+                    confirmationtype.valueOf(confirmationtype.BYDATE.toString()),
                     request.getConfirmation(),
                     request.isCompleted(),
-                    request.getSender().getId(),
                     request.getReceiver().getId()
+            );
+            return ResponseEntity.ok("Payment added successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid input: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Server error while adding payment: " + e.getMessage());
+        }
+    }
+
+    @PostMapping(path = "/createDate")
+    public ResponseEntity<String> addPaymentDate(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody payment request) {
+        try {
+            service.addNewPayment(
+                    authHeader,
+                    request.getPaymenttime(),
+                    request.getAmount(),
+                    confirmationtype.valueOf(confirmationtype.BYCODE.toString()),
+                    request.getConfirmation(),
+                    request.isCompleted(),
+                    request.getReceiver().getId()
+            );
+            return ResponseEntity.ok("Payment added successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid input: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Server error while adding payment: " + e.getMessage());
+        }
+    }
+
+    @PostMapping(path = "/createByAccountNo")
+    public ResponseEntity<String> addPaymentAccountNo(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody payment request) {
+        try {
+            service.payByAccount(
+                    request.getReceiver().getAccountNo(),
+                    authHeader,
+                    request.getPaymenttime(),
+                    request.getAmount(),
+                    request.getConfirmationtype(),
+                    request.getConfirmation(),
+                    request.isCompleted()
+            );
+            return ResponseEntity.ok("Payment added successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid input: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Server error while adding payment: " + e.getMessage());
+        }
+    }
+
+    @PostMapping(path = "/createByAccountNoCode")
+    public ResponseEntity<String> addPaymentAccountNoCode(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody payment request) {
+        try {
+            service.payByAccount(
+                    request.getReceiver().getAccountNo(),
+                    authHeader,
+                    request.getPaymenttime(),
+                    request.getAmount(),
+                    confirmationtype.valueOf(confirmationtype.BYCODE.toString()),
+                    request.getConfirmation(),
+                    request.isCompleted()
+            );
+            return ResponseEntity.ok("Payment added successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid input: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Server error while adding payment: " + e.getMessage());
+        }
+    }
+
+    @PostMapping(path = "/createByAccountNoDate")
+    public ResponseEntity<String> addPaymentAccountNoDate(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody payment request) {
+        try {
+            service.payByAccount(
+                    request.getReceiver().getAccountNo(),
+                    authHeader,
+                    request.getPaymenttime(),
+                    request.getAmount(),
+                    confirmationtype.valueOf(confirmationtype.BYDATE.toString()),
+                    request.getConfirmation(),
+                    request.isCompleted()
             );
             return ResponseEntity.ok("Payment added successfully");
         } catch (IllegalArgumentException e) {

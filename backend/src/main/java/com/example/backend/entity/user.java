@@ -43,6 +43,12 @@ public class user implements UserDetails {
     @OneToMany(mappedBy = "User")
     private Set<transaction> User;
 
+    private Long idNo;
+
+    private String accountNo;
+
+    private String phoneNo;
+
 
     public user() {
     }
@@ -100,18 +106,31 @@ public class user implements UserDetails {
         this.updatedAt = updatedAt;
     }
 
-    public user(Long id, String email, String firstName, String lastName, String password, Date createdAt, Date updatedAt, Set<payment> sent, Set<payment> received, Set<transaction> user) {
-        this.id = id;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.sent = sent;
-        this.received = received;
+    public Set<transaction> getUser() {
+        return User;
+    }
+
+    public void setUser(Set<transaction> user) {
         User = user;
     }
+
+    public Long getIdNo() {
+        return idNo;
+    }
+
+    public void setIdNo(Long idNo) {
+        this.idNo = idNo;
+    }
+
+    public String getAccountNo() {
+        return accountNo;
+    }
+
+    public void setAccountNo(String accountNo) {
+        this.accountNo = accountNo;
+    }
+
+
 
     public Set<payment> getSent() {
         return sent;
@@ -129,6 +148,30 @@ public class user implements UserDetails {
         this.received = received;
     }
 
+    public String getPhoneNo() {
+        return phoneNo;
+    }
+
+    public void setPhoneNo(String phoneNo) {
+        this.phoneNo = phoneNo;
+    }
+
+    public user(Long id, String email, String firstName, String lastName, String password, Date createdAt, Date updatedAt, Set<payment> sent, Set<payment> received, Set<transaction> user, Long idNo, String accountNo, String phoneNo) {
+        this.id = id;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.sent = sent;
+        this.received = received;
+        User = user;
+        this.idNo = idNo;
+        this.accountNo = accountNo;
+        this.phoneNo = phoneNo;
+    }
+
     @Override
     public String toString() {
         return "user{" +
@@ -142,6 +185,9 @@ public class user implements UserDetails {
                 ", sent=" + sent +
                 ", received=" + received +
                 ", User=" + User +
+                ", idNo=" + idNo +
+                ", accountNo='" + accountNo + '\'' +
+                ", phoneNo='" + phoneNo + '\'' +
                 '}';
     }
 

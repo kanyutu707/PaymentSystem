@@ -3,18 +3,43 @@ import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TextInput } from 'react-native'
 import { useRouter } from 'expo-router'
+import Constants from 'expo-constants';
 
 const signup = () => {
+    const apiUrl = Constants?.expoConfig?.extra?.apiUrl;
+
     const router = useRouter();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [idNumber, setIdNumber] = useState('');
+    const [idNo, setIdNo] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const signupform = async () => {
+
+        if (!apiUrl) {
+            return "sorry problem contacting the server";
+        }
+
+        try {
+            const response = await fetch(`${apiUrl}/auth/signup`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': "application/json"
+                },
+                body: JSON.stringify({ firstName, lastName, idNo, email, password })
+            })
+            const result = await response.json();
+            console.log(result);
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView 
+            <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
@@ -33,8 +58,8 @@ const signup = () => {
                         <View style={styles.halfInputContainer}>
                             <Text style={styles.inputLabel}>First Name</Text>
                             <View style={styles.inputWrapper}>
-                                <TextInput 
-                                    placeholder='First name' 
+                                <TextInput
+                                    placeholder='First name'
                                     style={styles.textInput}
                                     value={firstName}
                                     onChangeText={setFirstName}
@@ -47,8 +72,8 @@ const signup = () => {
                         <View style={styles.halfInputContainer}>
                             <Text style={styles.inputLabel}>Last Name</Text>
                             <View style={styles.inputWrapper}>
-                                <TextInput 
-                                    placeholder='Last name' 
+                                <TextInput
+                                    placeholder='Last name'
                                     style={styles.textInput}
                                     value={lastName}
                                     onChangeText={setLastName}
@@ -62,11 +87,11 @@ const signup = () => {
                     <View style={styles.inputGroup}>
                         <Text style={styles.inputLabel}>Identification Number</Text>
                         <View style={styles.inputWrapper}>
-                            <TextInput 
-                                placeholder='Enter your ID number' 
+                            <TextInput
+                                placeholder='Enter your ID number'
                                 style={styles.textInput}
-                                value={idNumber}
-                                onChangeText={setIdNumber}
+                                value={idNo}
+                                onChangeText={setIdNo}
                                 keyboardType="numeric"
                                 placeholderTextColor="#999999"
                             />
@@ -76,8 +101,8 @@ const signup = () => {
                     <View style={styles.inputGroup}>
                         <Text style={styles.inputLabel}>Email Address</Text>
                         <View style={styles.inputWrapper}>
-                            <TextInput 
-                                placeholder='Enter your email' 
+                            <TextInput
+                                placeholder='Enter your email'
                                 style={styles.textInput}
                                 value={email}
                                 onChangeText={setEmail}
@@ -91,8 +116,8 @@ const signup = () => {
                     <View style={styles.inputGroup}>
                         <Text style={styles.inputLabel}>Password</Text>
                         <View style={styles.inputWrapper}>
-                            <TextInput 
-                                placeholder='Create a password' 
+                            <TextInput
+                                placeholder='Create a password'
                                 style={styles.textInput}
                                 value={password}
                                 onChangeText={setPassword}
@@ -102,8 +127,8 @@ const signup = () => {
                         </View>
                     </View>
 
-                    <Pressable 
-                        onPress={() => router.navigate("./signin")} 
+                    <Pressable
+                        onPress={signupform}
                         style={({ pressed }) => [
                             styles.signupButton,
                             pressed && styles.signupButtonPressed
@@ -112,8 +137,8 @@ const signup = () => {
                         <Text style={styles.signupButtonText}>CREATE ACCOUNT</Text>
                     </Pressable>
 
-                    <TouchableOpacity 
-                        style={styles.signinContainer} 
+                    <TouchableOpacity
+                        style={styles.signinContainer}
                         onPress={() => router.navigate("./signin")}
                         activeOpacity={0.7}
                     >

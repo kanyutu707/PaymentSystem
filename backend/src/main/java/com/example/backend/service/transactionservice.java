@@ -24,13 +24,15 @@ public class transactionservice {
     @Autowired
     private userrepo userRepo;
 
+    @Autowired
+    private DecodeJwt decodeJwt;
+
     public void addNewTransaction(String authHeader,
                                   transactiontype transactiontype,
                                   platform platform,
-                                  Integer amount,
-                                  Long userId) {
+                                  Integer amount) {
 
-        user user = userRepo.findById(userId)
+        user user = userRepo.findById(decodeJwt.decodeJwt(authHeader))
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if (amount == null || amount <= 0) {

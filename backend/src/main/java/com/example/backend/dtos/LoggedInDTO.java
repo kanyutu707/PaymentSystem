@@ -1,26 +1,14 @@
 package com.example.backend.dtos;
 
-import com.example.backend.entity.payment;
-import com.example.backend.entity.transaction;
-import jakarta.persistence.OneToMany;
-
-import java.util.Set;
-
-public class RegisterUserDto {
+public class LoggedInDTO {
     private String email;
-    private String password;
     private String firstName;
     private String lastName;
-
-    private Set<payment> sent;
-
-    private Set<payment> received;
-
-    private Set<transaction> User;
     private Long idNo;
     private String accountNo;
-
     private String phoneNo;
+
+
 
     public String getEmail() {
         return email;
@@ -30,13 +18,6 @@ public class RegisterUserDto {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -70,35 +51,20 @@ public class RegisterUserDto {
         this.accountNo = accountNo;
     }
 
-    public Set<payment> getSent() {
-        return sent;
-    }
-
-    public void setSent(Set<payment> sent) {
-        this.sent = sent;
-    }
-
-    public Set<payment> getReceived() {
-        return received;
-    }
-
-    public void setReceived(Set<payment> received) {
-        this.received = received;
-    }
-
-    public Set<transaction> getUser() {
-        return User;
-    }
-
-    public void setUser(Set<transaction> user) {
-        User = user;
-    }
-
     public String getPhoneNo() {
         return phoneNo;
     }
 
     public void setPhoneNo(String phoneNo) {
+        this.phoneNo = phoneNo;
+    }
+
+    public LoggedInDTO(String email, String firstName, String lastName, Long idNo, String accountNo, String phoneNo) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.idNo = idNo;
+        this.accountNo = accountNo;
         this.phoneNo = phoneNo;
     }
 }

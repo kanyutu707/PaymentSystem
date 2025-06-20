@@ -2,12 +2,69 @@ import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from '
 import React, { useState } from 'react'
 import { useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Constants from 'expo-constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const signin = () => {
+  const apiUrl=Constants?.expoConfig?.extra?.apiUrl;
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+
+  const signinform=async()=>{
+    if(!apiUrl){
+      return "sorry problem contacting the server";
+    }
+   
+    try {
+      const response=await fetch(`${apiUrl}/auth/signin`, {
+        method:"POST",
+        headers:{
+          'Content-Type':"application/json"
+        },
+        body:JSON.stringify({email, password})
+      }
+     
+        
+      )
+       const result=await response.json();
+      
+       if(response.status==200){
+        try{
+          await AsyncStorage.setItem('token', result.token);
+          await getUser(result.token);
+        }
+        catch(e){
+          console.log(e + " \n sorry token does not exist");
+        }
+        router.navigate('./(tabs)')
+       }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const getUser=async (authToken:String)=>{
+    const response=await fetch(`${apiUrl}/user/loggedin`,{
+      headers:{
+        'Authorization':`Bearer ${authToken}`
+      }
+    })
+    const result = await response.json();
+    if(response.status==200){
+      try {
+        const jsonValue=JSON.stringify(result);
+        await AsyncStorage.setItem('userdetails', jsonValue);
+      } catch (error) {
+        console.error("sorry the data has not been found")
+      }
+    }
+    else{
+      console.error("User not selected")
+    }
+
+  }
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.logoSection}>
@@ -51,7 +108,7 @@ const signin = () => {
         </View>
 
         <Pressable 
-          onPress={() => router.navigate("./(tabs)")} 
+          onPress={signinform} 
           style={({ pressed }) => [
             styles.signinButton,
             pressed && styles.signinButtonPressed
