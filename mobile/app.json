@@ -3,7 +3,11 @@
     "name": "mobile",
     "slug": "mobile",
     "extra": {
-      "apiUrl": "http://192.168.0.101:8080"
+      "apiUrl": "http://192.168.0.101:8080",
+      "router": {},
+      "eas": {
+        "projectId": "b0472b7c-7cc6-4aef-a3f0-bf7d336ce6a2"
+      }
     },
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,7 +23,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.centalpage.mobile"
     },
     "web": {
       "bundler": "metro",

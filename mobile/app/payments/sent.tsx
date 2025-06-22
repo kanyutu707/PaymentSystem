@@ -1,118 +1,67 @@
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import Constants from 'expo-constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const sent = () => {
+interface SentItem {
+  accountNo: string;
+  amount: string | number;
+}
+
+const sent: React.FC = () => {
+
+  const [sent, setSent] = useState<SentItem[]>([]);
+
+  useEffect(() => {
+    getSent();
+  }, [])
+
+  const apiUrl = Constants?.expoConfig?.extra?.apiUrl;
+  const getData = async (): Promise<string | null> => {
+    try {
+      const value = await AsyncStorage.getItem('token');
+      return value ?? null;
+    } catch (e) {
+      console.error('Error fetching token:', e);
+      return null;
+    }
+  };
+
+  const getSent = async (): Promise<void> => {
+    const token = await getData();
+    const response = await fetch(`${apiUrl}/payment/getBySender`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    const result = await response.json();
+    if (response.status == 200) {
+      setSent(result);
+    }
+    else {
+      console.error("User not selected")
+    }
+
+  }
+
   return (
     <SafeAreaView style={styles.searchcontainer}>
 
       <TextInput style={styles.searchbar} placeholder='input your search query ...'></TextInput>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
-        <View style={styles.singleSent}>
-          <View style={styles.singleSentTop}>
-            <Text style={styles.singleSentTopAcc}>CR24DREDDFDD</Text>
-            <Text style={styles.singleSentTopAmt}>$ 2000</Text>
-          </View>
-          <Text style={styles.singleSentBottom}>14/3/2020</Text>
-        </View>
+        {sent == null ? (<Text>sorry data not found</Text>) : (
+          sent.map((singleSent: SentItem, index: number) => (
+            <View key={index} style={styles.singleSent}>
+              <View style={styles.singleSentTop}>
+                <Text style={styles.singleSentTopAcc}>{singleSent.accountNo}</Text>
+                <Text style={styles.singleSentTopAmt}>{singleSent.amount}</Text>
+              </View>
+              <Text style={styles.singleSentBottom}>14/3/2020</Text>
+            </View>
+          ))
+        )}
+
       </ScrollView>
     </SafeAreaView>
   )
@@ -144,7 +93,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     borderColor: "orange",
     borderWidth: 2,
-    padding:2,
+    padding: 2,
     justifyContent: "space-evenly"
   },
   singleSentTop: {
@@ -154,15 +103,15 @@ const styles = StyleSheet.create({
   },
   singleSentTopAcc: {
     fontSize: 20,
-    fontWeight: 700
+    fontWeight: "700"
   },
   singleSentTopAmt: {
     fontSize: 19,
-    fontWeight: 500
+    fontWeight: "500"
   },
   singleSentBottom: {
     fontSize: 13,
-    fontWeight: 800,
+    fontWeight: "800",
     color: "orange"
   }
 })

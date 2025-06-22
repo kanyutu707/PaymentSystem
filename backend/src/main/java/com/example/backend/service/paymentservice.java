@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.dtos.paymentdto;
 import com.example.backend.entity.*;
 import com.example.backend.repository.paymentrepo;
 import com.example.backend.repository.userrepo;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -81,6 +84,54 @@ public class paymentservice {
 
     public Iterable<payment> getAllPayments() {
         return repository.findAll();
+    }
+
+
+    public ResponseEntity<Iterable<paymentdto>> getBySenderId(String token){
+        Optional<user> foundUser = userRepo.findById(decodeJwt.decodeJwt(token));
+        if(foundUser.isPresent()) {
+            user userFound = foundUser.get();
+            List<payment> paymentFound = repository.findBysender(userFound);
+
+            List<paymentdto> paymentDtos = new ArrayList<>();
+
+            for(int singlepay = 0; singlepay < paymentFound.size(); singlepay++){
+
+                paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(),paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getSender().getAccountNo());
+
+                paymentDtos.add(founddto);
+            }
+
+
+            return ResponseEntity.ok(paymentDtos);
+        }
+
+
+        return ResponseEntity.notFound().build();
+    }
+
+
+    public ResponseEntity<Iterable<paymentdto>> getByRecipientId(String token){
+        Optional<user> foundUser = userRepo.findById(decodeJwt.decodeJwt(token));
+        if(foundUser.isPresent()) {
+            user userFound = foundUser.get();
+            List<payment> paymentFound = repository.findByreceiver(userFound);
+
+            List<paymentdto> paymentDtos = new ArrayList<>();
+
+            for(int singlepay = 0; singlepay < paymentFound.size(); singlepay++){
+
+                paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(),paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getReceiver().getAccountNo());
+
+                paymentDtos.add(founddto);
+            }
+
+
+            return ResponseEntity.ok(paymentDtos);
+        }
+
+
+        return ResponseEntity.notFound().build();
     }
 
     public ResponseEntity<payment> getById(Long id) {

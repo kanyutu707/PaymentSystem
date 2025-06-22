@@ -1,9 +1,11 @@
 package com.example.backend.controller;
 
+import com.example.backend.dtos.paymentdto;
 import com.example.backend.entity.confirmationtype;
 import com.example.backend.entity.payment;
 import com.example.backend.service.paymentservice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -164,6 +166,26 @@ public class paymentcontroller {
             return service.getById(id);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error fetching payment by ID: " + e.getMessage());
+        }
+    }
+
+    @GetMapping(path = "/getBySender")
+    public @ResponseBody ResponseEntity<Iterable<paymentdto>> getBySender(@RequestHeader("Authorization") String authHeader){
+        try {
+            return service.getBySenderId(authHeader);
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping(path = "/getByReceiver")
+    public @ResponseBody ResponseEntity<Iterable<paymentdto>> getByReceiver(@RequestHeader("Authorization") String authHeader){
+        try {
+            return service.getByRecipientId(authHeader);
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
