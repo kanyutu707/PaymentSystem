@@ -52,7 +52,6 @@ public class paymentservice {
         newPayment.setPaymenttime(paymenttime);
         newPayment.setAmount(amount);
         newPayment.setConfirmationtype(confirmationtype);
-        newPayment.setCompleted(isCompleted);
 
         if (confirmationtype == confirmationtype.BYCODE) {
             newPayment.setConfirmation(generateConfirmationCode());
@@ -60,6 +59,12 @@ public class paymentservice {
             newPayment.setConfirmation(confirmation);
         }
 
+        if(paymenttime.toString().equals("CURRENT")){
+            newPayment.setCompleted(true);
+        }
+        else{
+            newPayment.setCompleted(isCompleted);
+        }
         repository.save(newPayment);
     }
 
@@ -97,9 +102,12 @@ public class paymentservice {
 
             for(int singlepay = 0; singlepay < paymentFound.size(); singlepay++){
 
-                paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(),paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getSender().getAccountNo());
+                if(paymentFound.get(singlepay).isCompleted()) {
 
-                paymentDtos.add(founddto);
+                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getSender().getAccountNo());
+
+                    paymentDtos.add(founddto);
+                }
             }
 
 
@@ -109,6 +117,33 @@ public class paymentservice {
 
         return ResponseEntity.notFound().build();
     }
+
+    public ResponseEntity<Iterable<paymentdto>> getBySenderIdProcessing(String token){
+        Optional<user> foundUser = userRepo.findById(decodeJwt.decodeJwt(token));
+        if(foundUser.isPresent()) {
+            user userFound = foundUser.get();
+            List<payment> paymentFound = repository.findBysender(userFound);
+
+            List<paymentdto> paymentDtos = new ArrayList<>();
+
+            for(int singlepay = 0; singlepay < paymentFound.size(); singlepay++){
+
+                if(!(paymentFound.get(singlepay).isCompleted())) {
+
+                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getSender().getAccountNo());
+
+                    paymentDtos.add(founddto);
+                }
+            }
+
+
+            return ResponseEntity.ok(paymentDtos);
+        }
+
+
+        return ResponseEntity.notFound().build();
+    }
+
 
 
     public ResponseEntity<Iterable<paymentdto>> getByRecipientId(String token){
@@ -121,9 +156,36 @@ public class paymentservice {
 
             for(int singlepay = 0; singlepay < paymentFound.size(); singlepay++){
 
-                paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(),paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getReceiver().getAccountNo());
+                if(paymentFound.get(singlepay).isCompleted()) {
+                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getReceiver().getAccountNo());
 
-                paymentDtos.add(founddto);
+                    paymentDtos.add(founddto);
+                }
+            }
+
+
+            return ResponseEntity.ok(paymentDtos);
+        }
+
+
+        return ResponseEntity.notFound().build();
+    }
+
+    public ResponseEntity<Iterable<paymentdto>> getByRecipientIdProcesing(String token){
+        Optional<user> foundUser = userRepo.findById(decodeJwt.decodeJwt(token));
+        if(foundUser.isPresent()) {
+            user userFound = foundUser.get();
+            List<payment> paymentFound = repository.findByreceiver(userFound);
+
+            List<paymentdto> paymentDtos = new ArrayList<>();
+
+            for(int singlepay = 0; singlepay < paymentFound.size(); singlepay++){
+
+                if(!(paymentFound.get(singlepay).isCompleted())) {
+                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getReceiver().getAccountNo());
+
+                    paymentDtos.add(founddto);
+                }
             }
 
 
@@ -179,8 +241,8 @@ public class paymentservice {
                              paymenttime paymenttime,
                              Integer amount,
                              confirmationtype confirmationtype,
-                             String confirmation,
-                             boolean isCompleted) {
+                             String confirmation
+                             ) {
 
         if (accountNo == null || accountNo.isEmpty()) {
             throw new IllegalArgumentException("Receiver account number is required.");
@@ -203,12 +265,18 @@ public class paymentservice {
             newPayment.setPaymenttime(paymenttime);
             newPayment.setAmount(amount);
             newPayment.setConfirmationtype(confirmationtype);
-            newPayment.setCompleted(isCompleted);
+
 
             if (confirmationtype == confirmationtype.BYCODE) {
                 newPayment.setConfirmation(generateConfirmationCode());
             } else {
                 newPayment.setConfirmation(confirmation);
+            }
+            if(paymenttime.toString().equals("CURRENT")){
+                newPayment.setCompleted(true);
+            }
+            else{
+                newPayment.setCompleted(false);
             }
 
             repository.save(newPayment);

@@ -68,7 +68,7 @@ const payment = () => {
 
         <TouchableOpacity
           style={styles.paymentCard}
-          onPress={() => router.navigate('../payments/send-processing')}
+          onPress={() => router.navigate('../payments/sentprocessing')}
         >
           <Text style={styles.paymentCardText}>Send Processing</Text>
           <View style={styles.processingIndicator}>
@@ -79,7 +79,7 @@ const payment = () => {
 
         <TouchableOpacity
           style={styles.paymentCard}
-          onPress={() => router.navigate('../payments/received-processing')}
+          onPress={() => router.navigate('../payments/receivedprocessing')}
         >
           <Text style={styles.paymentCardText}>Received Processing</Text>
           <View style={styles.processingIndicator}>

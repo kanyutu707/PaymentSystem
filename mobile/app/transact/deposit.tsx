@@ -1,11 +1,25 @@
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Animated, Dimensions } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Animated, Dimensions, Alert } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
 import { Image } from 'expo-image';
 import AntDesign from '@expo/vector-icons/AntDesign';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 const { height: screenHeight } = Dimensions.get('window');
 
 const deposit = () => {
+
+    const apiUrl = Constants?.expoConfig?.extra?.apiUrl;
+
+    const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('token');
+            return value ?? null;
+        } catch (e) {
+            console.error('Error fetching token:', e);
+            return null;
+        }
+    };
+
     const [showMpesaOptions, setShowMpesaOptions] = useState<boolean>(false);
     const [showStripeOptions, setShowStripeOptions] = useState<boolean>(false);
     const [showPaypalOptions, setShowPaypalOptions] = useState<boolean>(false);
@@ -19,6 +33,10 @@ const deposit = () => {
     const bankSlideAnim = useRef(new Animated.Value(screenHeight)).current;
     const agentSlideAnim = useRef(new Animated.Value(screenHeight)).current;
 
+    const [amount, setAmount] = useState("");
+    const [platform, setPlatform] = useState(""); // Fixed: Initialize with empty string instead of undefined 'title'
+    const [transactiontype, settransactiontype] = useState("DEPOSIT");
+    const [isLoading, setIsLoading] = useState(false);
 
     const animateSlideUp = (animValue: Animated.Value, show: boolean) => {
         Animated.timing(animValue, {
@@ -28,6 +46,11 @@ const deposit = () => {
         }).start();
     };
 
+    // Helper function to open modal and set platform
+    const openPaymentModal = (paymentType: string, setShowModal: (show: boolean) => void) => {
+        setPlatform(paymentType);
+        setShowModal(true);
+    };
 
     useEffect(() => {
         animateSlideUp(mpesaSlideAnim, showMpesaOptions);
@@ -49,6 +72,54 @@ const deposit = () => {
         animateSlideUp(agentSlideAnim, showAgentOptions);
     }, [showAgentOptions]);
 
+
+    const validateDeposit = () => {
+        if (!amount.trim() || isNaN(Number(amount)) || Number(amount) <= 0) {
+            Alert.alert('Error', 'Please enter a valid amount');
+            return false;
+        }
+        return true;
+    }
+
+    const deposit = async () => {
+        if (!validateDeposit()) return;
+
+        const token = await getData();
+
+        setIsLoading(true);
+
+        try {
+            const response = await fetch(`${apiUrl}/transaction/create`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    amount: Number(amount),
+                    platform,
+                    transactiontype
+                })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                Alert.alert('Success', 'Deposit successful');
+                setAmount('');
+                setPlatform('');
+                settransactiontype('DEPOSIT'); // Reset to default instead of empty string
+            }
+            else {
+                Alert.alert('Error', result.message || 'Failed to deposit');
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Network error. Please try again.');
+            console.error('deposit error error:', error);
+
+        }finally{
+            setIsLoading(false);
+        }
+    }
+
     const renderForm = (animValue: Animated.Value, onClose: () => void, title: string) => (
         <Animated.View
             style={[
@@ -63,14 +134,16 @@ const deposit = () => {
                     <Text style={styles.modalTitle}>{title} Payment</Text>
                     <AntDesign name="closecircle" size={24} color="orange" onPress={onClose} />
                 </View>
-                <Text style={styles.transferLabel}>Phone Number</Text>
-                <TextInput style={styles.transferInput} placeholder="Enter phone number" />
                 <Text style={styles.transferLabel}>AMOUNT</Text>
-                <TextInput style={styles.transferInput} placeholder="Enter amount" keyboardType="numeric" />
-                <Text style={styles.transferLabel}>PASSWORD</Text>
-                <TextInput style={styles.transferInput} placeholder="Enter password" secureTextEntry />
-                <Pressable style={styles.transferFormBtn}>
-                    <Text style={styles.transferFormBtnTxt}>PAY</Text>
+                <TextInput 
+                style={styles.transferInput} 
+                placeholder="Enter amount" 
+                keyboardType="numeric" 
+                value={amount}
+                onChangeText={setAmount}/>
+
+                <Pressable style={[styles.transferFormBtn, isLoading && styles.disabledBtn]} onPress={deposit} disabled={isLoading}>
+                    <Text style={styles.transferFormBtnTxt}>{isLoading ? 'PROCESSING...' : 'PAY'}</Text>
                 </Pressable>
             </View>
         </Animated.View>
@@ -81,27 +154,27 @@ const deposit = () => {
             <ScrollView style={styles.deposit}>
                 <Text style={styles.header}>SELECT DEPOSIT METHOD</Text>
                 <View style={styles.row}>
-                    <TouchableOpacity onPress={() => setShowMpesaOptions(true)} style={styles.card}>
+                    <TouchableOpacity onPress={() => openPaymentModal("MPESA", setShowMpesaOptions)} style={styles.card}>
                         <Image style={styles.logo} source={require('../../assets/images/mpesa.jpg')} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.card} onPress={() => setShowStripeOptions(true)}>
+                    <TouchableOpacity style={styles.card} onPress={() => openPaymentModal("STRIPE", setShowStripeOptions)}>
                         <Image style={styles.logo} source={require('../../assets/images/stripe.jpg')} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.row}>
-                    <TouchableOpacity style={styles.card} onPress={() => setShowPaypalOptions(true)}>
+                    <TouchableOpacity style={styles.card} onPress={() => openPaymentModal("PAYPAL", setShowPaypalOptions)}>
                         <Image style={styles.logo} source={require('../../assets/images/paypal.jpg')} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.card} onPress={() => setShowBankOptions(true)}>
+                    <TouchableOpacity style={styles.card} onPress={() => openPaymentModal("BANK", setShowBankOptions)}>
                         <Image style={styles.logo} source={require('../../assets/images/bank.jpg')} />
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.row}>
-                    <TouchableOpacity style={styles.card} onPress={() => setShowAgentOptions(true)}>
+                    <TouchableOpacity style={styles.card} onPress={() => openPaymentModal("AGENT", setShowAgentOptions)}>
                         <Image style={styles.logo} source={require('../../assets/images/agent.jpg')} />
                     </TouchableOpacity>
                 </View>
@@ -171,6 +244,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 20,
+    },
+    disabledBtn: {
+        backgroundColor: "#cccccc",
     },
     transferFormBtnTxt: {
         fontWeight: '800',

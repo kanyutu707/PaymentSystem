@@ -77,8 +77,7 @@ public class paymentcontroller {
                     request.getPaymenttime(),
                     request.getAmount(),
                     request.getConfirmationtype(),
-                    request.getConfirmation(),
-                    request.isCompleted()
+                    request.getConfirmation()
             );
             return ResponseEntity.ok("Payment added successfully");
         } catch (IllegalArgumentException e) {
@@ -99,8 +98,7 @@ public class paymentcontroller {
                     request.getPaymenttime(),
                     request.getAmount(),
                     confirmationtype.valueOf(confirmationtype.BYCODE.toString()),
-                    request.getConfirmation(),
-                    request.isCompleted()
+                    request.getConfirmation()
             );
             return ResponseEntity.ok("Payment added successfully");
         } catch (IllegalArgumentException e) {
@@ -121,8 +119,7 @@ public class paymentcontroller {
                     request.getPaymenttime(),
                     request.getAmount(),
                     confirmationtype.valueOf(confirmationtype.BYDATE.toString()),
-                    request.getConfirmation(),
-                    request.isCompleted()
+                    request.getConfirmation()
             );
             return ResponseEntity.ok("Payment added successfully");
         } catch (IllegalArgumentException e) {
@@ -178,11 +175,30 @@ public class paymentcontroller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @GetMapping(path = "/getBySenderProcessing")
+    public @ResponseBody ResponseEntity<Iterable<paymentdto>> getBySenderProcessing(@RequestHeader("Authorization") String authHeader){
+        try {
+            return service.getBySenderIdProcessing(authHeader);
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     @GetMapping(path = "/getByReceiver")
     public @ResponseBody ResponseEntity<Iterable<paymentdto>> getByReceiver(@RequestHeader("Authorization") String authHeader){
         try {
             return service.getByRecipientId(authHeader);
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping(path = "/getByReceiverProcessing")
+    public @ResponseBody ResponseEntity<Iterable<paymentdto>> getByReceiverProcessing(@RequestHeader("Authorization") String authHeader){
+        try {
+            return service.getByRecipientIdProcesing(authHeader);
         } catch (Exception e) {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
