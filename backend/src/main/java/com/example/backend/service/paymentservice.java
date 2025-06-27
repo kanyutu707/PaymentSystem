@@ -6,12 +6,13 @@ import com.example.backend.repository.paymentrepo;
 import com.example.backend.repository.userrepo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class paymentservice {
@@ -59,10 +60,9 @@ public class paymentservice {
             newPayment.setConfirmation(confirmation);
         }
 
-        if(paymenttime.toString().equals("CURRENT")){
+        if (paymenttime.toString().equals("CURRENT")) {
             newPayment.setCompleted(true);
-        }
-        else{
+        } else {
             newPayment.setCompleted(isCompleted);
         }
         repository.save(newPayment);
@@ -92,19 +92,19 @@ public class paymentservice {
     }
 
 
-    public ResponseEntity<Iterable<paymentdto>> getBySenderId(String token){
+    public ResponseEntity<Iterable<paymentdto>> getBySenderId(String token) {
         Optional<user> foundUser = userRepo.findById(decodeJwt.decodeJwt(token));
-        if(foundUser.isPresent()) {
+        if (foundUser.isPresent()) {
             user userFound = foundUser.get();
             List<payment> paymentFound = repository.findBysender(userFound);
 
             List<paymentdto> paymentDtos = new ArrayList<>();
 
-            for(int singlepay = 0; singlepay < paymentFound.size(); singlepay++){
+            for (int singlepay = 0; singlepay < paymentFound.size(); singlepay++) {
 
-                if(paymentFound.get(singlepay).isCompleted()) {
+                if (paymentFound.get(singlepay).isCompleted()) {
 
-                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getSender().getAccountNo());
+                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getId(),paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getSender().getAccountNo());
 
                     paymentDtos.add(founddto);
                 }
@@ -118,46 +118,19 @@ public class paymentservice {
         return ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<Iterable<paymentdto>> getBySenderIdProcessing(String token){
+    public ResponseEntity<Iterable<paymentdto>> getBySenderIdProcessing(String token) {
         Optional<user> foundUser = userRepo.findById(decodeJwt.decodeJwt(token));
-        if(foundUser.isPresent()) {
+        if (foundUser.isPresent()) {
             user userFound = foundUser.get();
             List<payment> paymentFound = repository.findBysender(userFound);
 
             List<paymentdto> paymentDtos = new ArrayList<>();
 
-            for(int singlepay = 0; singlepay < paymentFound.size(); singlepay++){
+            for (int singlepay = 0; singlepay < paymentFound.size(); singlepay++) {
 
-                if(!(paymentFound.get(singlepay).isCompleted())) {
+                if (!(paymentFound.get(singlepay).isCompleted())) {
 
-                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getSender().getAccountNo());
-
-                    paymentDtos.add(founddto);
-                }
-            }
-
-
-            return ResponseEntity.ok(paymentDtos);
-        }
-
-
-        return ResponseEntity.notFound().build();
-    }
-
-
-
-    public ResponseEntity<Iterable<paymentdto>> getByRecipientId(String token){
-        Optional<user> foundUser = userRepo.findById(decodeJwt.decodeJwt(token));
-        if(foundUser.isPresent()) {
-            user userFound = foundUser.get();
-            List<payment> paymentFound = repository.findByreceiver(userFound);
-
-            List<paymentdto> paymentDtos = new ArrayList<>();
-
-            for(int singlepay = 0; singlepay < paymentFound.size(); singlepay++){
-
-                if(paymentFound.get(singlepay).isCompleted()) {
-                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getReceiver().getAccountNo());
+                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getId(), paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getSender().getAccountNo());
 
                     paymentDtos.add(founddto);
                 }
@@ -171,18 +144,44 @@ public class paymentservice {
         return ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<Iterable<paymentdto>> getByRecipientIdProcesing(String token){
+
+    public ResponseEntity<Iterable<paymentdto>> getByRecipientId(String token) {
         Optional<user> foundUser = userRepo.findById(decodeJwt.decodeJwt(token));
-        if(foundUser.isPresent()) {
+        if (foundUser.isPresent()) {
             user userFound = foundUser.get();
             List<payment> paymentFound = repository.findByreceiver(userFound);
 
             List<paymentdto> paymentDtos = new ArrayList<>();
 
-            for(int singlepay = 0; singlepay < paymentFound.size(); singlepay++){
+            for (int singlepay = 0; singlepay < paymentFound.size(); singlepay++) {
 
-                if(!(paymentFound.get(singlepay).isCompleted())) {
-                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getReceiver().getAccountNo());
+                if (paymentFound.get(singlepay).isCompleted()) {
+                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getId(), paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getReceiver().getAccountNo());
+
+                    paymentDtos.add(founddto);
+                }
+            }
+
+
+            return ResponseEntity.ok(paymentDtos);
+        }
+
+
+        return ResponseEntity.notFound().build();
+    }
+
+    public ResponseEntity<Iterable<paymentdto>> getByRecipientIdProcesing(String token) {
+        Optional<user> foundUser = userRepo.findById(decodeJwt.decodeJwt(token));
+        if (foundUser.isPresent()) {
+            user userFound = foundUser.get();
+            List<payment> paymentFound = repository.findByreceiver(userFound);
+
+            List<paymentdto> paymentDtos = new ArrayList<>();
+
+            for (int singlepay = 0; singlepay < paymentFound.size(); singlepay++) {
+
+                if (!(paymentFound.get(singlepay).isCompleted())) {
+                    paymentdto founddto = new paymentdto(paymentFound.get(singlepay).getId(), paymentFound.get(singlepay).getAmount(), paymentFound.get(singlepay).getConfirmation(), paymentFound.get(singlepay).getReceiver().getAccountNo());
 
                     paymentDtos.add(founddto);
                 }
@@ -203,8 +202,8 @@ public class paymentservice {
     }
 
     public String generateConfirmationCode() {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
-        return RandomStringUtils.random(20, characters);
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        return RandomStringUtils.random(10, characters);
     }
 
     public String completePayment(Long id) {
@@ -242,7 +241,7 @@ public class paymentservice {
                              Integer amount,
                              confirmationtype confirmationtype,
                              String confirmation
-                             ) {
+    ) {
 
         if (accountNo == null || accountNo.isEmpty()) {
             throw new IllegalArgumentException("Receiver account number is required.");
@@ -272,10 +271,9 @@ public class paymentservice {
             } else {
                 newPayment.setConfirmation(confirmation);
             }
-            if(paymenttime.toString().equals("CURRENT")){
+            if (paymenttime.toString().equals("CURRENT")) {
                 newPayment.setCompleted(true);
-            }
-            else{
+            } else {
                 newPayment.setCompleted(false);
             }
 
@@ -285,16 +283,79 @@ public class paymentservice {
         }
     }
 
-    public String useDate(String currentDate, Long id) {
-        Optional<payment> paymentFound = repository.findById(id);
-        if (paymentFound.isEmpty()) return "Payment not found";
 
-        payment payment = paymentFound.get();
-        if (payment.getConfirmationtype() == confirmationtype.BYDATE &&
-                payment.getConfirmation().equals(currentDate)) {
-            return completePayment(id);
-        } else {
-            return "Date does not match. Payment unsuccessful";
+    public ResponseEntity<String> confirmSender(Long id, String codeInput, String authHeader) {
+        Optional<payment> optionalPayment = repository.findById(id);
+        if (optionalPayment.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Payment with that ID not found");
+        }
+
+        payment foundPayment = optionalPayment.get();
+        Long senderIdFromJwt = decodeJwt.decodeJwt(authHeader);
+        if (!Objects.equals(foundPayment.getSender().getId(), senderIdFromJwt)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sender not authorized");
+        }
+
+        if (codeInput == null || codeInput.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Sender code must not be empty");
+        }
+
+        foundPayment.setSenderCode(codeInput.trim());
+
+        if (isValidCode(foundPayment.getSenderCode()) &&
+                isValidCode(foundPayment.getReceiverCode()) &&
+                !foundPayment.isCompleted()) {
+            foundPayment.setCompleted(true);
+        }
+
+        repository.save(foundPayment);
+        return ResponseEntity.ok("Sender confirmation successful");
+    }
+
+    public ResponseEntity<String> confirmRecipient(Long id, String codeInput, String authHeader) {
+        Optional<payment> optionalPayment = repository.findById(id);
+        if (optionalPayment.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Payment with that ID not found");
+        }
+
+        payment foundPayment = optionalPayment.get();
+        Long receiverIdFromJwt = decodeJwt.decodeJwt(authHeader);
+        if (!Objects.equals(foundPayment.getReceiver().getId(), receiverIdFromJwt)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Recipient not authorized");
+        }
+
+        if (codeInput == null || codeInput.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Receiver code must not be empty");
+        }
+
+        foundPayment.setReceiverCode(codeInput.trim());
+
+        if (isValidCode(foundPayment.getSenderCode()) &&
+                isValidCode(foundPayment.getReceiverCode()) &&
+                !foundPayment.isCompleted()) {
+            foundPayment.setCompleted(true);
+        }
+
+        repository.save(foundPayment);
+        return ResponseEntity.ok("Recipient confirmation successful");
+    }
+
+    private boolean isValidCode(String code) {
+        return code != null && !code.trim().isEmpty();
+    }
+
+
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void autoCompletePaymentsByDate() {
+        String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        List<payment> payments = repository.findByConfirmationtypeAndIsCompleted(confirmationtype.BYDATE, false);
+
+        for (payment p : payments) {
+            if (formattedDate.equals(p.getConfirmation())) {
+                p.setCompleted(true);
+                repository.save(p);
+            }
         }
     }
 }

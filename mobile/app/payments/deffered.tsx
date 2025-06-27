@@ -3,10 +3,38 @@ import React, { useState } from 'react'
 import Constants from 'expo-constants';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 const deffered = () => {
 
-  const apiUrl=Constants?.expoConfig?.extra?.apiUrl;
+
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+
+  const onChange = (event: any, selectedDate: any) => {
+    const currentDate = selectedDate;
+    setShow(false);
+    setDate(currentDate);
+    const formattedDate = currentDate.toISOString().split('T')[0];
+    setConfirmation(formattedDate);
+  };
+
+  const showMode = (currentMode: any) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
+  const showTimepicker = () => {
+    showMode('time');
+  };
+
+  const apiUrl = Constants?.expoConfig?.extra?.apiUrl;
 
   const getData = async () => {
     try {
@@ -123,7 +151,7 @@ const deffered = () => {
         setAmount('');
         setConfirmation('');
         setReceiver('');
-    
+
         setIsOpen2(false);
         setselectedStyle2(styles.none);
       } else {
@@ -143,7 +171,7 @@ const deffered = () => {
     setIsLoadingCode(true);
     try {
       const response = await fetch(`${apiUrl}/payment/createByAccountNoCode`, {
-      
+
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +184,7 @@ const deffered = () => {
         })
       });
       const result = await response.json();
-      
+
 
       if (response.ok) {
         Alert.alert('Success', `Code lock created! Your code: ${result.code || 'Check your email'}`);
@@ -202,14 +230,29 @@ const deffered = () => {
             placeholder="Enter amount"
             keyboardType="numeric"
           />
-         
+
           <Text style={styles.formLabel}>DATE</Text>
-          <TextInput
-            style={styles.formInput}
-            value={confirmation}
-            onChangeText={setConfirmation}
-            placeholder="Enter date for withdrawal"
-          />
+          <Pressable onPress={showDatepicker}>
+            <TextInput
+              style={styles.formInput}
+              editable={false}
+              value={confirmation}
+              onChangeText={setConfirmation}
+              placeholder="select a date"
+              onPress={showDatepicker}
+              pointerEvents='none'
+            />
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode="date"
+                is24Hour={true}
+                onChange={onChange}
+                minimumDate={new Date()}
+              />
+            )}
+          </Pressable>
           <Pressable
             style={[styles.formButton, isLoadingDate && styles.disabledButton]}
             onPress={payDate}

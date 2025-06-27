@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dtos.confirmdto;
 import com.example.backend.dtos.paymentdto;
 import com.example.backend.entity.confirmationtype;
 import com.example.backend.entity.payment;
@@ -205,16 +206,23 @@ public class paymentcontroller {
         }
     }
 
-    @PutMapping(path = "/payByDate/{id}")
-    public ResponseEntity<String> updateByDate(@PathVariable Long id) {
-        try {
-            String formattedDate = ft.format(new Date());
-            service.useDate(formattedDate, id);
-            return ResponseEntity.ok("Payment processed using date");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error processing payment by date: " + e.getMessage());
-        }
+
+    @PutMapping("/confirmbysender")
+    public ResponseEntity<String> confirmBySender(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody confirmdto request) {
+
+        return service.confirmSender(request.getId(), request.getCode(), authHeader);
     }
+
+    @PutMapping("/confirmbyrecipient")
+    public ResponseEntity<String> confirmByRecipient(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody confirmdto request) {
+
+        return service.confirmRecipient(request.getId(), request.getCode(), authHeader);
+    }
+
 
     @PutMapping(path = "/payByCode/{id}")
     public ResponseEntity<String> updateByCode(@RequestParam String sender, @RequestParam String recipient, @PathVariable Long id) {

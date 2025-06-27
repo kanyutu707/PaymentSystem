@@ -1,5 +1,6 @@
 package com.example.backend.repository;
 
+import com.example.backend.entity.confirmationtype;
 import com.example.backend.entity.payment;
 import com.example.backend.entity.user;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,7 @@ public interface paymentrepo extends JpaRepository<payment, Long> {
     List<payment> findBysender(user userFound);
 
     List<payment> findByreceiver(user userFound);
+
+    List<payment> findByConfirmationtypeAndIsCompleted(confirmationtype type, boolean isCompleted);
+
 }

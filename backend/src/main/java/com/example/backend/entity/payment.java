@@ -25,6 +25,14 @@ public class payment {
     private String confirmation;
 
 
+    @ColumnDefault("'bydate'")
+    private String senderCode;
+
+    @ColumnDefault("'bydate'")
+    private String receiverCode;
+
+
+
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
     private  user sender;
@@ -101,13 +109,31 @@ public class payment {
         this.receiver = receiver;
     }
 
-    public payment(Long id,  Integer amount, paymenttime paymenttime, confirmationtype confirmationtype, boolean isCompleted, String confirmation, user sender, user receiver) {
+    public String getSenderCode() {
+        return senderCode;
+    }
+
+    public void setSenderCode(String senderCode) {
+        this.senderCode = senderCode;
+    }
+
+    public String getReceiverCode() {
+        return receiverCode;
+    }
+
+    public void setReceiverCode(String receiverCode) {
+        this.receiverCode = receiverCode;
+    }
+
+    public payment(Long id, Integer amount, paymenttime paymenttime, confirmationtype confirmationtype, boolean isCompleted, String confirmation, String senderCode, String receiverCode, user sender, user receiver) {
         this.id = id;
         this.amount = amount;
         this.paymenttime = paymenttime;
         this.confirmationtype = confirmationtype;
         this.isCompleted = isCompleted;
         this.confirmation = confirmation;
+        this.senderCode = senderCode;
+        this.receiverCode = receiverCode;
         this.sender = sender;
         this.receiver = receiver;
     }
@@ -121,6 +147,8 @@ public class payment {
                 ", confirmationtype=" + confirmationtype +
                 ", isCompleted=" + isCompleted +
                 ", confirmation='" + confirmation + '\'' +
+                ", senderCode='" + senderCode + '\'' +
+                ", receiverCode='" + receiverCode + '\'' +
                 ", sender=" + sender +
                 ", receiver=" + receiver +
                 '}';
