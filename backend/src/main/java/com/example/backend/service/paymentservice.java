@@ -29,7 +29,7 @@ public class paymentservice {
     @Autowired
     private DecodeJwt decodeJwt;
 
-    public void addNewPayment(String authHeader,
+    public ResponseEntity<String> addNewPayment(String authHeader,
                               paymenttime paymenttime,
                               Integer amount,
                               confirmationtype confirmationtype,
@@ -65,15 +65,22 @@ public class paymentservice {
         } else {
             newPayment.setCompleted(isCompleted);
         }
-        repository.save(newPayment);
+        try{
+            repository.save(newPayment);
+
+            return ResponseEntity.ok("payment created successfully");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-    public void updatePayment(paymenttime paymenttime,
-                              Integer amount,
-                              confirmationtype confirmationtype,
-                              boolean isCompleted,
-                              String confirmation,
-                              Long id) {
+    public ResponseEntity<String> updatePayment(paymenttime paymenttime,
+                                                Integer amount,
+                                                confirmationtype confirmationtype,
+                                                boolean isCompleted,
+                                                String confirmation,
+                                                Long id) {
 
         payment updatedPayment = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found"));
@@ -84,11 +91,18 @@ public class paymentservice {
         if (confirmation != null) updatedPayment.setConfirmation(confirmation);
         updatedPayment.setCompleted(isCompleted);
 
-        repository.save(updatedPayment);
+        try{
+
+            repository.save(updatedPayment);
+            return ResponseEntity.ok("payment updated successfully");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-    public Iterable<payment> getAllPayments() {
-        return repository.findAll();
+    public ResponseEntity<Iterable<payment>> getAllPayments() {
+        return ResponseEntity.ok(repository.findAll());
     }
 
 
@@ -212,8 +226,12 @@ public class paymentservice {
             payment payment = paymentFound.get();
             if (!payment.isCompleted()) {
                 payment.setCompleted(true);
-                repository.save(payment);
-                return "Payment completed";
+                try{
+                    repository.save(payment);
+                    return "Payment completed";
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             } else {
                 return "Payment already completed";
             }
@@ -222,25 +240,25 @@ public class paymentservice {
         }
     }
 
-    public String useCode(String sender, String recipient, Long id) {
+    public ResponseEntity<String> useCode(String sender, String recipient, Long id) {
         Optional<payment> paymentFound = repository.findById(id);
-        if (paymentFound.isEmpty()) return "Payment not found";
+        if (paymentFound.isEmpty()) return ResponseEntity.ok("Payment not found");
 
         payment payment = paymentFound.get();
         if (payment.getConfirmationtype() == confirmationtype.BYCODE &&
                 payment.getConfirmation().equals(sender + recipient)) {
-            return completePayment(id);
+            return ResponseEntity.ok(completePayment(id));
         } else {
-            return "Code does not match. Payment unsuccessful";
+            return  ResponseEntity.ok("Code does not match. Payment unsuccessful");
         }
     }
 
-    public void payByAccount(String accountNo,
-                             String authHeader,
-                             paymenttime paymenttime,
-                             Integer amount,
-                             confirmationtype confirmationtype,
-                             String confirmation
+    public ResponseEntity<String> payByAccount(String accountNo,
+                                               String authHeader,
+                                               paymenttime paymenttime,
+                                               Integer amount,
+                                               confirmationtype confirmationtype,
+                                               String confirmation
     ) {
 
         if (accountNo == null || accountNo.isEmpty()) {
@@ -276,8 +294,13 @@ public class paymentservice {
             } else {
                 newPayment.setCompleted(false);
             }
+            try{
+                repository.save(newPayment);
+                return ResponseEntity.ok("payment by account successful");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
-            repository.save(newPayment);
         } else {
             throw new IllegalArgumentException("Recipient with account number not found.");
         }
@@ -307,9 +330,12 @@ public class paymentservice {
                 !foundPayment.isCompleted()) {
             foundPayment.setCompleted(true);
         }
-
-        repository.save(foundPayment);
-        return ResponseEntity.ok("Sender confirmation successful");
+        try{
+            repository.save(foundPayment);
+            return ResponseEntity.ok("Sender confirmation successful");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public ResponseEntity<String> confirmRecipient(Long id, String codeInput, String authHeader) {
@@ -335,9 +361,13 @@ public class paymentservice {
                 !foundPayment.isCompleted()) {
             foundPayment.setCompleted(true);
         }
+        try{
+            repository.save(foundPayment);
+            return ResponseEntity.ok("Recipient confirmation successful");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        repository.save(foundPayment);
-        return ResponseEntity.ok("Recipient confirmation successful");
     }
 
     private boolean isValidCode(String code) {
@@ -354,7 +384,12 @@ public class paymentservice {
         for (payment p : payments) {
             if (formattedDate.equals(p.getConfirmation())) {
                 p.setCompleted(true);
-                repository.save(p);
+                try {
+                    repository.save(p);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         }
     }

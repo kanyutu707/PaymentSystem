@@ -27,7 +27,7 @@ public class transactionservice {
     @Autowired
     private DecodeJwt decodeJwt;
 
-    public void addNewTransaction(String authHeader,
+    public ResponseEntity<String> addNewTransaction(String authHeader,
                                   transactiontype transactiontype,
                                   platform platform,
                                   Integer amount) {
@@ -53,14 +53,20 @@ public class transactionservice {
         newTransaction.setPlatform(platform);
         newTransaction.setTransactiontype(transactiontype);
         newTransaction.setAmount(amount);
+        try {
+            repository.save(newTransaction);
+            return ResponseEntity.ok("transaction created successfully");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        repository.save(newTransaction);
+
     }
 
-    public void updateTransaction(transactiontype transactiontype,
-                                  platform platform,
-                                  Integer amount,
-                                  Long id) {
+    public ResponseEntity<String> updateTransaction(transactiontype transactiontype,
+                                                    platform platform,
+                                                    Integer amount,
+                                                    Long id) {
 
         transaction existingTransaction = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
@@ -69,11 +75,17 @@ public class transactionservice {
         if (platform != null) existingTransaction.setPlatform(platform);
         if (amount != null && amount > 0) existingTransaction.setAmount(amount);
 
-        repository.save(existingTransaction);
+        try{
+            repository.save(existingTransaction);
+            return ResponseEntity.ok("transaction updated successfully");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-    public Iterable<transaction> getAllTransactions() {
-        return repository.findAll();
+    public ResponseEntity<Iterable<transaction>> getAllTransactions() {
+        return ResponseEntity.ok(repository.findAll());
     }
 
     public ResponseEntity<transaction> getById(Long id) {

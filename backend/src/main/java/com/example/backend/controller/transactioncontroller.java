@@ -18,65 +18,43 @@ public class transactioncontroller {
     public ResponseEntity<String> createTransaction(
             @RequestHeader("Authorization") String authHeader,
             @RequestBody transaction request) {
-        try {
+
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.badRequest().body("Missing or invalid Authorization header");
             }
 
             String token = authHeader.substring(7);
 
-            service.addNewTransaction(
+            return service.addNewTransaction(
                     token,
                     request.getTransactiontype(),
                     request.getPlatform(),
                     request.getAmount()
             );
 
-            return ResponseEntity.ok("Transaction completed successfully");
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid transaction data: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Server error while processing transaction: " + e.getMessage());
         }
-    }
 
     @PutMapping(path = "/update/{id}")
     public ResponseEntity<String> updateTransaction(
             @RequestBody transaction request,
             @PathVariable Long id) {
-        try {
-            service.updateTransaction(
+
+            return    service.updateTransaction(
                     request.getTransactiontype(),
                     request.getPlatform(),
                     request.getAmount(),
                     id
             );
-            return ResponseEntity.ok("Transaction updated successfully");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid input: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Server error while updating transaction: " + e.getMessage());
-        }
+
     }
 
     @GetMapping(path = "/getAll")
     public @ResponseBody ResponseEntity<Iterable<transaction>> getAllTransactions() {
-        try {
-            return ResponseEntity.ok(service.getAllTransactions());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return service.getAllTransactions();
     }
 
     @GetMapping(path = "/get/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        try {
-            return service.getById(id);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid ID: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error fetching transaction: " + e.getMessage());
-        }
+        return service.getById(id);
     }
 }
