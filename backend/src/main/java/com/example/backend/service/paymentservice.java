@@ -314,6 +314,12 @@ public class paymentservice {
         }
 
         payment foundPayment = optionalPayment.get();
+        if (foundPayment == null || foundPayment.getConfirmationtype() == null ||
+                !foundPayment.getConfirmationtype().toString().equals("BYCODE")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Sorry, the data is not defined by code.");
+        }
+
         Long senderIdFromJwt = decodeJwt.decodeJwt(authHeader);
         if (!Objects.equals(foundPayment.getSender().getId(), senderIdFromJwt)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sender not authorized");
@@ -345,6 +351,12 @@ public class paymentservice {
         }
 
         payment foundPayment = optionalPayment.get();
+        if (foundPayment == null || foundPayment.getConfirmationtype() == null ||
+                !foundPayment.getConfirmationtype().toString().equals("BYCODE")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Sorry, the data is not defined by code.");
+        }
+
         Long receiverIdFromJwt = decodeJwt.decodeJwt(authHeader);
         if (!Objects.equals(foundPayment.getReceiver().getId(), receiverIdFromJwt)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Recipient not authorized");
